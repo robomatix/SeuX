@@ -14,7 +14,7 @@ var enemies1SpeedX = 4;
 
 // Game state
 var gameOver = false;
-var bomber_1 = bomber_2 = bomber_3 = false;
+var bomber_1 = bomber_2 = false;
 
 
 // Some hellper functions : 
@@ -52,10 +52,10 @@ function Enemy(node){
 		this.node.y(this.speedy, true);
 	};
 }
-function Minion(node){
+function Bomber(node){
 	this.node = $(node);
 }
-Minion.prototype = new Enemy();
+Bomber.prototype = new Enemy();
 
 
 	//  List of enemies animations :
@@ -113,10 +113,13 @@ $(function(){
 				$(".enemy").each(function(){
 						this.enemy.update($("#player"));
 						var posx = $(this).x();
-						if(this.enemy instanceof Minion){
+						if(this.enemy instanceof Bomber){
 							if((posx) > 500){
 							if (this.id === "bomber_1") {
 								bomber_1=false;
+							 } 
+							if (this.id === "bomber_2") {
+								bomber_2=false;
 							 }    
 								$(this).remove();
 								return;
@@ -129,16 +132,23 @@ $(function(){
 		//This function manage the creation of the bombers
 	$.playground().registerCallback(function(){
 		if(!gameOver){
-			if(!bomber_1){
+			if(!bomber_1 && Math.random() > 0.75){
 					bomber_1=true;
 					var name = "bomber_1";
 					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: -60, posy: 5,width: 60, height: 40});
 					$("#"+name).addClass("enemy");
-					$("#"+name)[0].enemy = new Minion($("#"+name));
+					$("#"+name)[0].enemy = new Bomber($("#"+name));
+			}
+			if(!bomber_2 && Math.random() > 0.65){
+					bomber_2=true;
+					var name = "bomber_2";
+					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: -60, posy: 65,width: 60, height: 40});
+					$("#"+name).addClass("enemy");
+					$("#"+name)[0].enemy = new Bomber($("#"+name));
 			}
 		} 
 		
-	}, 1000); //once per seconds is enough for this
+	}, 500); //once per 1/2 second is enough for this
 
 });
 
