@@ -17,7 +17,7 @@ var gameOver = false;
 var bomber_1 = bomber_2 = false;
 
 
-// Some hellper functions : 
+// Some helper functions : 
 
 // Function to restart the game:
 function restartgame(){
@@ -114,7 +114,7 @@ $(function(){
 						this.enemy.update($("#player"));
 						var posx = $(this).x();
 						if(this.enemy instanceof Bomber){
-							if((posx) > 500){
+							if(posx < -60 || posx > 560){
 							if (this.id === "bomber_1") {
 								bomber_1=false;
 							 } 
@@ -135,16 +135,35 @@ $(function(){
 			if(!bomber_1 && Math.random() > 0.75){
 					bomber_1=true;
 					var name = "bomber_1";
-					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: -60, posy: 5,width: 60, height: 40});
+					// Appears on the right or on the left ?
+					if(Math.random() > 0.5){//Right
+							bomber_1_posx = 560;
+							bomber_1_speedx = -enemies1SpeedX;						
+						}else{//Left
+							bomber_1_posx = -60;
+							bomber_1_speedx = enemies1SpeedX;
+					}
+					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 5,width: 60, height: 40});
 					$("#"+name).addClass("enemy");
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
+					$("#"+name)[0].enemy.speedx=bomber_1_speedx;
 			}
 			if(!bomber_2 && Math.random() > 0.65){
 					bomber_2=true;
 					var name = "bomber_2";
-					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: -60, posy: 65,width: 60, height: 40});
+					// Appears on the right or on the left ?
+					if(Math.random() > 0.5){//Right
+							bomber_2_posx = 560;
+							bomber_2_speedx = -enemies1SpeedX;						
+						}else{//Left
+							bomber_2_posx = -60;
+							bomber_2_speedx = enemies1SpeedX;
+					}
+					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 65,width: 60, height: 40});
 					$("#"+name).addClass("enemy");
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
+					$("#"+name)[0].enemy = new Bomber($("#"+name));
+					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
 		} 
 		
