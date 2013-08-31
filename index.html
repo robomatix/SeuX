@@ -51,9 +51,7 @@
 			body { font-size:16px; font-family:"Open Sans",Arial,Helvetica,Sans-serif; }
 
 			#game { width:500px; margin:20 auto; position:relative; }
-			#playground { margin:auto; background:#000; }
-			#welcome { text-align:center; color:yellow; }
-			#pause { position:absolute; width:100%; text-align:center; color:yellow; }
+
 			
 			#console { position:absolute; top:510px; width:460px; padding:20px;
 				background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
@@ -64,19 +62,15 @@
 </head>
 <body>
 <section id="game">
-			<div id="playground">
-				<div id="welcome">
-					Press [<span>Enter</span>] to Start the Game!
-				</div>
-				<div id="pause">
-					<br /> [Enter] Restart
-				</div>
+	<div id="playground" style="width: 500px; height: 500px; background: black;">
+		<div id="welcomeScreen" style="width: 500px; height: 250px; position: absolute; z-index: 100; background-image: url(logo.png); font-family: verdana, sans-serif;">
+			<div style="position: absolute; top: 120px; width: 700px; color: white;">
+				<center><a style="cursor: pointer;" id="startbutton">Click here to start!</a></center>
 			</div>
-			<div id="console">
-				Score : <span id="scoreLeft">0</span>
-				<br />Pause: [Enter]
-			</div>
-		</section>
+		</div><!-- #playground -->
+	</div><!-- #game -->
+	<div id="console">Pouet</div>
+</section>
 </body>
 </html>
 
