@@ -1,14 +1,21 @@
 // Global constants:
 var PLAYGROUND_WIDTH	= 500;
 var PLAYGROUND_HEIGHT	= 500;
-var REFRESH_RATE		= 25;
+var REFRESH_RATE		= 30;
 
-// Gloabl animation holder
+// Global animation holder
 var playerAnimation = new Array();
+var enemies = new Array(1); // There are one (three soon... ) kind of enemies in the game
 
+
+// Global movement
+var playerMove = 9;
+var enemies1SpeedX = 4;
 
 // Game state
 var gameOver = false;
+var bomber_1 = bomber_2 = bomber_3 = false;
+
 
 // Some hellper functions : 
 
@@ -25,6 +32,36 @@ function Player(node){
 	
 	return true;
 }
+function Enemy(node){
+	this.speedx	= enemies1SpeedX;
+	this.speedy	= 0;
+	this.node = $(node);
+	
+
+	
+	// updates the position of the enemy
+	this.update = function(playerNode){
+		this.updateX(playerNode);
+		this.updateY(playerNode);
+	};	
+	this.updateX = function(playerNode){
+		this.node.x(this.speedx, true);
+	};
+	this.updateY= function(playerNode){
+		var newpos = parseInt(this.node.css("top"))+this.speedy;
+		this.node.y(this.speedy, true);
+	};
+}
+function Minion(node){
+	this.node = $(node);
+}
+Minion.prototype = new Enemy();
+
+
+	//  List of enemies animations :
+	// 1st kind of enemy:
+	enemies[0] = new Array(); // enemies have two animations
+	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
 
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
@@ -59,20 +96,49 @@ $(function(){
 	$.playground().registerCallback(function(){
 
 
-			//Update the movement of the ship:
+			//Update the movement of the player:
 				if(jQuery.gameQuery.keyTracker[37] || jQuery.gameQuery.keyTracker[87]){ //this is left! (<- or w)
-					var nextpos = $("#player").x()-5;
+					var nextpos = $("#player").x()-playerMove;
 					if(nextpos > 0){
 						$("#player").x(nextpos);
 					}
 				}
 				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88]){ //this is right! (-> or x)
-					var nextpos = $("#player").x()+5;
+					var nextpos = $("#player").x()+playerMove;
 					if(nextpos < PLAYGROUND_WIDTH - 40){
 						$("#player").x(nextpos);
 					}
 				}
+			//Update the movement of the enemies
+				$(".enemy").each(function(){
+						this.enemy.update($("#player"));
+						var posx = $(this).x();
+						if(this.enemy instanceof Minion){
+							if((posx) > 500){
+							if (this.id === "bomber_1") {
+								bomber_1=false;
+							 }    
+								$(this).remove();
+								return;
+							}
+						}
+
+					});
 	}, REFRESH_RATE);
+	
+		//This function manage the creation of the bombers
+	$.playground().registerCallback(function(){
+		if(!gameOver){
+			if(!bomber_1){
+					bomber_1=true;
+					var name = "bomber_1";
+					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: -60, posy: 5,width: 60, height: 40});
+					$("#"+name).addClass("enemy");
+					$("#"+name)[0].enemy = new Minion($("#"+name));
+			}
+		} 
+		
+	}, 1000); //once per seconds is enough for this
 
 });
 
