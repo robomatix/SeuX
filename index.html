@@ -1,0 +1,82 @@
+<!--
+
+   index.html
+   
+   http://robomatix.net
+   http://le-carre-noir.net
+   
+   Copyright 2013 robomatix <robomatix@robomatix-IMEDIA-9201>
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   V.0.0.1
+   Started 25/08/2013 by robomatix rebirth
+      
+-->
+
+<html>
+<head>
+	
+<title>seuX</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="description" content="seux : Le shoot'em up de la mort qui tue" />
+
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<![endif]-->
+<link href="css/style.css" rel="stylesheet">
+<script src="js/jquery.js"></script>
+<script src="js/jquery.gamequery-0.7.1.js"></script>
+<script src="js/seux.js"></script>
+		<style type="text/css">
+			
+			@import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
+
+			body { font-size:16px; font-family:"Open Sans",Arial,Helvetica,Sans-serif; }
+
+			#game { width:500px; margin:20 auto; position:relative; }
+			#playground { margin:auto; background:#000; }
+			#welcome { text-align:center; color:yellow; }
+			#pause { position:absolute; width:100%; text-align:center; color:yellow; }
+			
+			#console { position:absolute; top:510px; width:460px; padding:20px;
+				background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
+			
+		</style>
+<meta name="robots" content="noindex, nofollow">
+
+</head>
+<body>
+<section id="game">
+			<div id="playground">
+				<div id="welcome">
+					Press [<span>Enter</span>] to Start the Game!
+				</div>
+				<div id="pause">
+					<br /> [Enter] Restart
+				</div>
+			</div>
+			<div id="console">
+				Score : <span id="scoreLeft">0</span>
+				<br />Pause: [Enter]
+			</div>
+		</section>
+</body>
+</html>
+
