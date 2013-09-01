@@ -5,14 +5,14 @@ var REFRESH_RATE		= 30;
 
 // Global animation holder
 var playerAnimation = new Array();
-var enemies = new Array(1); // There are one (three soon... ) kind of enemies in the game
+var enemies = new Array(2); // There are two (three soon... ) kind of enemies in the game
 var missile = new Array();
 
 
 // Global movement constants://px per frame
 var playerMove = 9;
 var enemies1SpeedX = 4;
-var BOMB_1_SPEED = 4; 
+var BOMB_1_SPEED = 4;
 
 // Game state
 var gameOver = false;
@@ -26,6 +26,27 @@ var playerAnimationState = 0;
 function restartgame(){
 	window.location.reload();
 };
+
+// Apparence of the hero according to his state
+function playerAnimationStateSwitch(){
+	switch(playerAnimationState){
+				case 1:
+					$("#player").setAnimation(playerAnimation["damaged-1"]);
+					break;
+				case 2:
+					$("#player").setAnimation(playerAnimation["damaged-2"]);
+					break;
+				case 3:
+					$("#player").setAnimation(playerAnimation["damaged-3"]);
+					break;
+				case 4:
+					$("#player").setAnimation(playerAnimation["damaged-4"]);
+					break;
+				case 5:
+					$("#player").setAnimation(playerAnimation["damaged-5"]);
+					break;
+				}
+	}
 
 // Game objects:
 function Player(node){
@@ -60,9 +81,6 @@ function Bomber(node){
 }
 Bomber.prototype = new Enemy();
 
-
-
-
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
 // --------------------------------------------------------------------------------------------------------------------
@@ -71,12 +89,18 @@ $(function(){
 	
 	// Player space shipannimations:
 	playerAnimation["idle"]		= new $.gQ.Animation({imageURL: "images/hero.png"});
-	playerAnimation["hitted-1"]	= new $.gQ.Animation({imageURL: "images/hero-white-bg-orange.png"});
-	playerAnimation["hitted-2"]	= new $.gQ.Animation({imageURL: "images/hero-white.png"});
+	playerAnimation["hitted-1"]	= new $.gQ.Animation({imageURL: "images/hero-hitted-1.png", numberOfFrame: 2, delta: 40, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	playerAnimation["damaged-1"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-1.png"});
+	playerAnimation["damaged-2"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-2.png"});
+	playerAnimation["damaged-3"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-3.png"});
+	playerAnimation["damaged-4"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-4.png"});
+	playerAnimation["damaged-5"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-5.png"});
 	
 	//  List of enemies animations :
 	// 1st kind of enemy:
 	enemies[0] = new Array(); // enemies have two animations
+	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+		enemies[0] = new Array(); // enemies have two animations
 	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
 	
 	// Weapon missile:
@@ -161,14 +185,17 @@ $(function(){
 					if(collided.length > 0){
 						//The player has been hit!
 						collided.each(function(){
-								$("#player").setAnimation(playerAnimation["hitted-1"]);
-								playerAnimationState = 1;// See the fonction that managed the look of the player
+								$("#player").setAnimation(playerAnimation["hitted-1"],callback=playerAnimationStateSwitch);
+								playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
 							})
 						$(this).remove();
 						/*
 						$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
 						$(this).removeClass("enemiesMissiles");
 						* */
+						if(playerAnimationState == 6){
+							alert('gameover');
+							}
 					}
 				});
 		
@@ -213,20 +240,6 @@ $(function(){
 		} 
 		
 	}, 500); //once per 1/2 second is enough for this
-	
-	// This fonction managed the look of the player
-	$.playground().registerCallback(function(){
-			switch(playerAnimationState){
-				case 2:
-					$("#player").setAnimation(playerAnimation["idle"]);
-					playerAnimationState = 0;
-					break;
-				case 1:
-					$("#player").setAnimation(playerAnimation["hitted-2"]);
-					playerAnimationState = 2;
-					break;
-				}
-	}, 333);
 
 });
 
