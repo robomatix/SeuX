@@ -17,6 +17,7 @@ var BOMB_1_SPEED = 4;
 // Game state
 var gameOver = false;
 var bomber_1 = bomber_2 = false;
+var playerAnimationState = 0;
 
 
 // Some helper functions : 
@@ -60,13 +61,7 @@ function Bomber(node){
 Bomber.prototype = new Enemy();
 
 
-	//  List of enemies animations :
-	// 1st kind of enemy:
-	enemies[0] = new Array(); // enemies have two animations
-	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
-	
-	// Weapon missile:
-	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
+
 
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
@@ -76,6 +71,16 @@ $(function(){
 	
 	// Player space shipannimations:
 	playerAnimation["idle"]		= new $.gQ.Animation({imageURL: "images/hero.png"});
+	playerAnimation["hitted-1"]	= new $.gQ.Animation({imageURL: "images/hero-white-bg-orange.png"});
+	playerAnimation["hitted-2"]	= new $.gQ.Animation({imageURL: "images/hero-white.png"});
+	
+	//  List of enemies animations :
+	// 1st kind of enemy:
+	enemies[0] = new Array(); // enemies have two animations
+	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+	
+	// Weapon missile:
+	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	
 	// Initialize the game:
 	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true});
@@ -152,13 +157,12 @@ $(function(){
 					}
 					$(this).y(BOMB_1_SPEED, true);
 					//Test for collisions
-					var collided = $(this).collision("#playerBody,."+$.gQ.groupCssClass);
+					var collided = $(this).collision("#player,."+$.gQ.groupCssClass);
 					if(collided.length > 0){
 						//The player has been hit!
 						collided.each(function(){
-								if($("#player")[0].player.damage()){
-									explodePlayer($("#player"));
-								}
+								$("#player").setAnimation(playerAnimation["hitted-1"]);
+								playerAnimationState = 1;// See the fonction that managed the look of the player
 							})
 						$(this).remove();
 						/*
@@ -209,6 +213,20 @@ $(function(){
 		} 
 		
 	}, 500); //once per 1/2 second is enough for this
+	
+	// This fonction managed the look of the player
+	$.playground().registerCallback(function(){
+			switch(playerAnimationState){
+				case 2:
+					$("#player").setAnimation(playerAnimation["idle"]);
+					playerAnimationState = 0;
+					break;
+				case 1:
+					$("#player").setAnimation(playerAnimation["hitted-2"]);
+					playerAnimationState = 2;
+					break;
+				}
+	}, 333);
 
 });
 
