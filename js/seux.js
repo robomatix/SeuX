@@ -12,11 +12,12 @@ var missile = new Array();
 // Global movement constants://px per frame
 var playerMove = 9;
 var enemies1SpeedX = 4;
+var enemies2SpeedX = 6;
 var BOMB_1_SPEED = 4;
 
 // Game state
 var gameOver = false;
-var bomber_1 = bomber_2 = false;
+var bomber_1 = bomber_2 = tracker = false;
 var playerAnimationState = 0;
 
 
@@ -80,6 +81,10 @@ function Bomber(node){
 	this.node = $(node);
 }
 Bomber.prototype = new Enemy();
+function Tracker(node){
+	this.node = $(node);
+}
+Tracker.prototype = new Enemy();
 
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
@@ -100,8 +105,8 @@ $(function(){
 	// 1st kind of enemy:
 	enemies[0] = new Array(); // enemies have two animations
 	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
-		enemies[0] = new Array(); // enemies have two animations
-	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+	enemies[1] = new Array(); // enemies have two animations
+	enemies[1]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
 	
 	// Weapon missile:
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
@@ -157,6 +162,16 @@ $(function(){
 								bomber_2=false;
 							 }    
 								$(this).remove();
+								return;
+							}
+						}
+						if(this.enemy instanceof Tracker){
+							if(posx < 0){
+								$("#tracker")[0].enemy.speedx=enemies2SpeedX;   
+								return;
+							}
+							if(posx > 460){
+								$("#tracker")[0].enemy.speedx=-enemies2SpeedX;   
 								return;
 							}
 						}
@@ -240,6 +255,29 @@ $(function(){
 		} 
 		
 	}, 500); //once per 1/2 second is enough for this
+	
+			//This function manage the creation of the tracker
+	$.playground().registerCallback(function(){
+		if(!gameOver){
+			if(!tracker && Math.random() > 0.75){
+					tracker=true;
+					var name = "tracker";
+					// Appears on the right or on the left ?
+					if(Math.random() > 0.5){//Right
+							tracker_posx = 540;
+							tracker_speedx = -enemies2SpeedX;						
+						}else{//Left
+							tracker_posx = -40;
+							tracker_speedx = enemies2SpeedX;
+					}
+					$("#actors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 120,width: 40, height: 36});
+					$("#"+name).addClass("enemy");
+					$("#"+name)[0].enemy = new Tracker($("#"+name));
+					$("#"+name)[0].enemy.speedx=tracker_speedx;
+			}
+		} 
+		
+	}, 1000); //once per 1 second is enough for this
 
 });
 
