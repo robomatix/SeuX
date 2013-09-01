@@ -6,11 +6,13 @@ var REFRESH_RATE		= 30;
 // Global animation holder
 var playerAnimation = new Array();
 var enemies = new Array(1); // There are one (three soon... ) kind of enemies in the game
+var missile = new Array();
 
 
-// Global movement
+// Global movement constants://px per frame
 var playerMove = 9;
 var enemies1SpeedX = 4;
+var BOMB_1_SPEED = 4; 
 
 // Game state
 var gameOver = false;
@@ -62,6 +64,9 @@ Bomber.prototype = new Enemy();
 	// 1st kind of enemy:
 	enemies[0] = new Array(); // enemies have two animations
 	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+	
+	// Weapon missile:
+	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
@@ -76,9 +81,10 @@ $(function(){
 	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true});
 				
 	// Initialize the background
-	$.playground().addGroup("actors", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+	$.playground().addGroup("enemiesMissileLayer",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+					.end()
+					.addGroup("actors", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
 							.addSprite("player",{animation: playerAnimation["idle"], posx: (PLAYGROUND_WIDTH/2)-20, posy: 455, width: 40, height: 40})
-						.end()
 					.end();
 	
 	$("#player")[0].player = new Player($("#player"));
@@ -125,8 +131,43 @@ $(function(){
 								return;
 							}
 						}
+			//Make the enemies fire
+					if(this.enemy instanceof Bomber){
+						if(Math.random() < 0.02){
+							var enemyposx = $(this).x();
+							var enemyposy = $(this).y();
+							var name = "enemiesBomb_1_"+Math.ceil(Math.random()*1000);
+							$("#enemiesMissileLayer").addSprite(name,{animation: missile["enemies"], posx: enemyposx+20, posy: enemyposy + 25, width: 20,height: 30});
+							$("#"+name).addClass("enemiesMissiles");
+						}
+					}
 
 					});
+		//Update the movement of the missiles
+			$(".enemiesMissiles").each(function(){
+					var posy = $(this).y();
+					if(posy > 500){
+						$(this).remove();
+						return;
+					}
+					$(this).y(BOMB_1_SPEED, true);
+					//Test for collisions
+					var collided = $(this).collision("#playerBody,."+$.gQ.groupCssClass);
+					if(collided.length > 0){
+						//The player has been hit!
+						collided.each(function(){
+								if($("#player")[0].player.damage()){
+									explodePlayer($("#player"));
+								}
+							})
+						$(this).remove();
+						/*
+						$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
+						$(this).removeClass("enemiesMissiles");
+						* */
+					}
+				});
+		
 	}, REFRESH_RATE);
 	
 		//This function manage the creation of the bombers
