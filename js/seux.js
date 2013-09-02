@@ -17,7 +17,7 @@ var BOMB_1_SPEED = 4;
 
 // Game state
 var gameOver = false;
-var bomber_1 = bomber_2 = tracker = false;
+var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
 var playerAnimationState = 0;
 
 
@@ -153,6 +153,7 @@ $(function(){
 				$(".enemy").each(function(){
 						this.enemy.update($("#player"));
 						var posx = $(this).x();
+						var posy = $(this).y();// Used for the tracker
 						if(this.enemy instanceof Bomber){
 							if(posx < -60 || posx > 560){
 							if (this.id === "bomber_1") {
@@ -174,6 +175,43 @@ $(function(){
 								$("#tracker")[0].enemy.speedx=-enemies2SpeedX;   
 								return;
 							}
+							if(posy > 550){
+								$(this).remove();
+								tracker=false;
+								heroDetectedByTracker=false;
+								return;   
+							}
+							// Detect if the hero is near below
+							if(nextpos>posx-80 && nextpos<posx+120 && !heroDetectedByTracker){
+								if(Math.random() < 0.03){
+									$("#tracker")[0].enemy.speedx=0;
+									$("#tracker")[0].enemy.speedy=33;
+									heroDetectedByTracker=true;
+									return;
+								}
+							}
+							
+							//Test for collision with the tracker
+							var collided = $(this).collision("#player,."+$.gQ.groupCssClass);
+							if(collided.length > 0){
+								//The player has been hit!
+								collided.each(function(){
+										$("#player").setAnimation(playerAnimation["hitted-1"],callback=playerAnimationStateSwitch);
+										playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
+									})
+								$(this).remove();
+								tracker=false;
+								heroDetectedByTracker=false;
+								/*
+								$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
+								$(this).removeClass("enemiesMissiles");
+								* */
+								if(playerAnimationState == 6){
+									alert('gameover');
+									}
+							}
+							
+							
 						}
 			//Make the enemies fire
 					if(this.enemy instanceof Bomber){
