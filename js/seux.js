@@ -137,13 +137,13 @@ $(function(){
 
 
 			//Update the movement of the player:
-				if(jQuery.gameQuery.keyTracker[37] || jQuery.gameQuery.keyTracker[87]){ //this is left! (<- or w)
+				if(jQuery.gameQuery.keyTracker[37] || jQuery.gameQuery.keyTracker[87] || jQuery.gameQuery.keyTracker[81]){ //this is left! (<- or w or q)
 					var nextpos = $("#player").x()-playerMove;
 					if(nextpos > 0){
 						$("#player").x(nextpos);
 					}
 				}
-				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88]){ //this is right! (-> or x)
+				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88] || jQuery.gameQuery.keyTracker[68]){ //this is right! (-> or x d)
 					var nextpos = $("#player").x()+playerMove;
 					if(nextpos < PLAYGROUND_WIDTH - 40){
 						$("#player").x(nextpos);
