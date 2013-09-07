@@ -14,11 +14,13 @@ var playerMove = 9;
 var enemies1SpeedX = 4;
 var enemies2SpeedX = 6;
 var BOMB_1_SPEED = 4;
+var MISSILE_PLAYER_SPEED = -12;
 
 // Game state
 var gameOver = false;
 var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
 var playerAnimationState = 0;
+var score = 0;
 
 
 // Some helper functions : 
@@ -58,10 +60,19 @@ function Player(node){
 	return true;
 }
 function Enemy(node){
+	this.shield	= 1;
 	this.speedx	= enemies1SpeedX;
 	this.speedy	= 0;
 	this.node = $(node);
 	
+		// deals with damage endured by an enemy
+	this.damage = function(){
+		this.shield--;
+		if(this.shield == 0){
+			return true;
+		}
+		return false;
+	};
 
 	
 	// updates the position of the enemy
@@ -105,10 +116,14 @@ $(function(){
 	// 1st kind of enemy:
 	enemies[0] = new Array(); // enemies have two animations
 	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+	enemies[0]["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	enemies[1] = new Array(); // enemies have two animations
 	enemies[1]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
+	enemies[1]["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Weapon missile:
+	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-v1.png"});
+	missile["playerexplode"] = new $.gQ.Animation({imageURL: "images/missile-hero-explosion.png" , numberOfFrame: 4, delta: 95, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	
 	// Initialize the game:
@@ -117,9 +132,13 @@ $(function(){
 	// Initialize the background
 	$.playground().addGroup("enemiesMissileLayer",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
 					.end()
-					.addGroup("actors", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+					.addGroup("enemiesActors",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+					.end()
+					
+					.addGroup("heroActor", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
 							.addSprite("player",{animation: playerAnimation["idle"], posx: (PLAYGROUND_WIDTH/2)-20, posy: 455, width: 40, height: 40})
-					.end();
+							.end()
+							.addGroup("playerMissileLayer",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
 	
 	$("#player")[0].player = new Player($("#player"));
 		
@@ -155,16 +174,19 @@ $(function(){
 						var posx = $(this).x();
 						var posy = $(this).y();// Used for the tracker
 						if(this.enemy instanceof Bomber){
+							
 							if(posx < -60 || posx > 560){
-							if (this.id === "bomber_1") {
-								bomber_1=false;
-							 } 
-							if (this.id === "bomber_2") {
-								bomber_2=false;
-							 }    
+								
+								if (this.id === "bomber_1") {
+									bomber_1=false;
+								 } 
+								if (this.id === "bomber_2") {
+									bomber_2=false;
+								 }    
 								$(this).remove();
 								return;
 							}
+							
 						}
 						if(this.enemy instanceof Tracker){
 							if(posx < 0){
@@ -226,6 +248,54 @@ $(function(){
 
 					});
 		//Update the movement of the missiles
+			$(".playerMissiles").each(function(){
+					var posy = $(this).y();
+					if(posy < 0){
+						$(this).remove();
+						return;
+					}
+					$(this).y(MISSILE_PLAYER_SPEED, true);
+					//Test for collisions
+					var collided = $(this).collision(".enemy,."+$.gQ.groupCssClass);
+
+					if(collided.length > 0){
+
+						//An enemy has been hit!
+						collided.each(function(){
+						
+									if(this.enemy instanceof Bomber) {
+										
+										if (this.id === "bomber_1") {
+											bomber_1=false;
+										} 
+										if (this.id === "bomber_2") {
+											bomber_2=false;
+										 } 
+										$(this).setAnimation(enemies[0]["explode"], function(node){$(node).remove();});
+										 score = score+10; 
+										   
+									} else {
+										tracker=false;
+										$(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();});
+										score = score+20;
+									}
+									$(this).removeClass("enemy");
+							
+							})
+							
+						// The player missile explode !!!!
+						/*
+						$(this).setAnimation(missile["playerexplode"], function(node){$(node).remove();});
+						$(this).css("width", 95);
+						$(this).css("height", 91);
+						$(this).x(-27, true);
+						$(this).removeClass("playerMissiles");
+						* */
+						$(this).removeClass("playerMissiles").remove();
+						
+					}
+				});
+
 			$(".enemiesMissiles").each(function(){
 					var posy = $(this).y();
 					if(posy > 500){
@@ -251,6 +321,8 @@ $(function(){
 							}
 					}
 				});
+				
+				$("#console").html('Game Started / SCORE : ' + score);
 		
 	}, REFRESH_RATE);
 	
@@ -268,7 +340,7 @@ $(function(){
 							bomber_1_posx = -60;
 							bomber_1_speedx = enemies1SpeedX;
 					}
-					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 5,width: 60, height: 40});
+					$("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 5,width: 60, height: 40});
 					$("#"+name).addClass("enemy");
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_1_speedx;
@@ -284,9 +356,8 @@ $(function(){
 							bomber_2_posx = -60;
 							bomber_2_speedx = enemies1SpeedX;
 					}
-					$("#actors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 65,width: 60, height: 40});
+					$("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 65,width: 60, height: 40});
 					$("#"+name).addClass("enemy");
-					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
@@ -308,7 +379,7 @@ $(function(){
 							tracker_posx = -40;
 							tracker_speedx = enemies2SpeedX;
 					}
-					$("#actors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 120,width: 40, height: 36});
+					$("#enemiesActors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 120,width: 40, height: 36});
 					$("#"+name).addClass("enemy");
 					$("#"+name)[0].enemy = new Tracker($("#"+name));
 					$("#"+name)[0].enemy.speedx=tracker_speedx;
@@ -316,6 +387,22 @@ $(function(){
 		} 
 		
 	}, 1000); //once per 1 second is enough for this
+	
+		//this is where the keybinding occurs
+	$(document).keydown(function(e){
+		if(!gameOver){
+			switch(e.keyCode){
+				case 75: //this is shoot (k)
+					//shoot missile here
+					var playerposx = $("#player").x();
+					var playerposy = $("#player").y();
+					var name = "playerMissle_"+Math.ceil(Math.random()*1000);
+					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 16, posy: playerposy, width: 8,height: 17});
+					$("#"+name).addClass("playerMissiles")
+					break;
+			}
+		}
+	});
 
 });
 
