@@ -124,7 +124,6 @@ $(function(){
 	
 	// Weapon missile:
 	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-v1.png"});
-	missile["playerexplode"] = new $.gQ.Animation({imageURL: "images/missile-hero-explosion.png" , numberOfFrame: 4, delta: 95, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	
 	// Initialize the game:
@@ -294,14 +293,6 @@ $(function(){
 							
 							})
 							
-						// The player missile explode !!!!
-						/*
-						$(this).setAnimation(missile["playerexplode"], function(node){$(node).remove();});
-						$(this).css("width", 95);
-						$(this).css("height", 91);
-						$(this).x(-27, true);
-						$(this).removeClass("playerMissiles");
-						* */
 						$(this).removeClass("playerMissiles").remove();
 						
 					}
@@ -323,10 +314,6 @@ $(function(){
 								playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
 							})
 						$(this).remove();
-						/*
-						$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
-						$(this).removeClass("enemiesMissiles");
-						* */
 						if(playerAnimationState == 6){
 							alert('gameover');
 							}
