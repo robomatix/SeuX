@@ -21,6 +21,7 @@ var gameOver = false;
 var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
 var playerAnimationState = 0;
 var score = 0;
+var playerShootingOn = true;
 
 
 // Some helper functions : 
@@ -162,11 +163,21 @@ $(function(){
 						$("#player").x(nextpos);
 					}
 				}
-				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88] || jQuery.gameQuery.keyTracker[68]){ //this is right! (-> or x d)
+				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88] || jQuery.gameQuery.keyTracker[68]){ //this is right! (-> or x or d)
 					var nextpos = $("#player").x()+playerMove;
 					if(nextpos < PLAYGROUND_WIDTH - 40){
 						$("#player").x(nextpos);
 					}
+				}
+				//The player shoots:
+				if(jQuery.gameQuery.keyTracker[75] && playerShootingOn ){ // this is right! (-> or x or d)
+				//shoot missile here
+					var playerposx = $("#player").x();
+					var playerposy = $("#player").y();
+					var name = "playerMissle_"+Math.ceil(Math.random()*1000);
+					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 16, posy: playerposy, width: 8,height: 17});
+					$("#"+name).addClass("playerMissiles");
+					playerShootingOn = false;
 				}
 			//Update the movement of the enemies
 				$(".enemy").each(function(){
@@ -388,21 +399,16 @@ $(function(){
 		
 	}, 1000); //once per 1 second is enough for this
 	
-		//this is where the keybinding occurs
-	$(document).keydown(function(e){
-		if(!gameOver){
-			switch(e.keyCode){
-				case 75: //this is shoot (k)
-					//shoot missile here
-					var playerposx = $("#player").x();
-					var playerposy = $("#player").y();
-					var name = "playerMissle_"+Math.ceil(Math.random()*1000);
-					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 16, posy: playerposy, width: 8,height: 17});
-					$("#"+name).addClass("playerMissiles")
-					break;
-			}
-		}
-	});
+		//This function manage the shoring of the player
+	$.playground().registerCallback(function(){
+		if(!gameOver && !playerShootingOn){
+				playerShootingOn = true;
+		} 
+		
+	}, 500); //once per 1/2 second is enough for this
+	
+	
+
 
 });
 
