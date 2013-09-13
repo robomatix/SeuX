@@ -124,7 +124,9 @@ $(function(){
 	
 	// Weapon missile:
 	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-v1.png"});
+	missile["enemies"] = new Array(); // enemies's missiles have two animations
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
+	missile["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Initialize the game:
 	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true});
@@ -265,7 +267,7 @@ $(function(){
 						return;
 					}
 					$(this).y(MISSILE_PLAYER_SPEED, true);
-					//Test for collisions
+					//Test for collisions with enemies
 					var collided = $(this).collision(".enemy,."+$.gQ.groupCssClass);
 
 					if(collided.length > 0){
@@ -283,20 +285,49 @@ $(function(){
 										 } 
 										$(this).setAnimation(enemies[0]["explode"], function(node){$(node).remove();});
 										 score = score+10; 
+										 
 										   
-									} else {
+									} else if(this.enemy instanceof Tracker){
+										
 										tracker=false;
 										$(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();});
 										score = score+20;
+										
 									}
+									
 									$(this).removeClass("enemy");
+									
 							
 							})
 							
 						$(this).removeClass("playerMissiles").remove();
 						
 					}
+					
+					//Test for collisions with enemies's missiles
+					var collidedMissile = $(this).collision(".enemiesMissiles,."+$.gQ.groupCssClass);
+
+					if(collidedMissile.length > 0){
+
+						//An enemy missile has been hit!
+						collidedMissile.each(function(){						
+
+							$(this).setAnimation(missile["explode"], function(node){$(node).remove();});
+										 
+							score = score+2;
+							
+							$(this).removeClass("enemiesMissiles");
+														
+							})
+							
+						$(this).removeClass("playerMissiles").remove();
+						
+					}
+					
+					
 				});
+				
+				
 
 			$(".enemiesMissiles").each(function(){
 					var posy = $(this).y();
