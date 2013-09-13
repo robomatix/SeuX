@@ -158,20 +158,20 @@ $(function(){
 
 
 			//Update the movement of the player:
-				if(jQuery.gameQuery.keyTracker[37] || jQuery.gameQuery.keyTracker[87] || jQuery.gameQuery.keyTracker[81]){ //this is left! (<- or w or q)
+				if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81]){ //this is left! (<- or w or q)
 					var nextpos = $("#player").x()-playerMove;
 					if(nextpos > 0){
 						$("#player").x(nextpos);
 					}
 				}
-				if(jQuery.gameQuery.keyTracker[39] || jQuery.gameQuery.keyTracker[88] || jQuery.gameQuery.keyTracker[68]){ //this is right! (-> or x or d)
+				if( $.gQ.keyTracker[39] ||  $.gQ.keyTracker[88] ||  $.gQ.keyTracker[68]){ //this is right! (-> or x or d)
 					var nextpos = $("#player").x()+playerMove;
 					if(nextpos < PLAYGROUND_WIDTH - 40){
 						$("#player").x(nextpos);
 					}
 				}
 				//The player shoots:
-				if((jQuery.gameQuery.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is right! (-> or x or d)
+				if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is right! (-> or x or d)
 				//shoot missile here
 					var playerposx = $("#player").x();
 					var playerposy = $("#player").y();
