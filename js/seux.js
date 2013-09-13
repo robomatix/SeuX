@@ -129,7 +129,7 @@ $(function(){
 	missile["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Initialize the game:
-	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true});
+	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true, mouseTracker: true});
 				
 	// Initialize the background
 	$.playground().addGroup("enemiesMissileLayer",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
@@ -171,7 +171,7 @@ $(function(){
 					}
 				}
 				//The player shoots:
-				if(jQuery.gameQuery.keyTracker[75] && playerShootingOn ){ // this is right! (-> or x or d)
+				if((jQuery.gameQuery.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is right! (-> or x or d)
 				//shoot missile here
 					var playerposx = $("#player").x();
 					var playerposy = $("#player").y();
