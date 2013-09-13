@@ -10,7 +10,7 @@ var missile = new Array();
 
 
 // Global movement constants://px per frame
-var playerMove = 9;
+var playerMove = 10;
 var enemies1SpeedX = 4;
 var enemies2SpeedX = 6;
 var BOMB_1_SPEED = 4;
@@ -157,21 +157,27 @@ $(function(){
 	$.playground().registerCallback(function(){
 
 
+			
 			//Update the movement of the player:
-				if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81]){ //this is left! (<- or w or q)
-					var nextpos = $("#player").x()-playerMove;
+			mousePosX=$.gQ.mouseTracker['x']-($(window).width()/2)+(PLAYGROUND_WIDTH/2)
+			playerPosX=$("#player").x();
+				//if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81] || ( mousePosX<playerPosX && mousePosX<playerPosX-20 ) ){ //this is left! (<- or w or q or mouse on the left) reminder
+				if( mousePosX<playerPosX && mousePosX<playerPosX-10 ){ //this is left! (<- or w or q or mouse on the left)
+					var nextpos = playerPosX-playerMove;
 					if(nextpos > 0){
 						$("#player").x(nextpos);
 					}
 				}
-				if( $.gQ.keyTracker[39] ||  $.gQ.keyTracker[88] ||  $.gQ.keyTracker[68]){ //this is right! (-> or x or d)
-					var nextpos = $("#player").x()+playerMove;
-					if(nextpos < PLAYGROUND_WIDTH - 40){
+				//if( $.gQ.keyTracker[39] ||  $.gQ.keyTracker[88] ||  $.gQ.keyTracker[68] || ( mousePosX>playerPosX && mousePosX>playerPosX+20 ) ){ //this is right! (-> or x or d or mouse on the right)
+				if( mousePosX>playerPosX && mousePosX>playerPosX+10 ){ //this is right! (-> or x or d or mouse on the right)
+					var nextpos = playerPosX+playerMove;
+					if(nextpos < PLAYGROUND_WIDTH - 45){
 						$("#player").x(nextpos);
 					}
 				}
 				//The player shoots:
-				if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is right! (-> or x or d)
+				//if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is k to shoot!  reminder
+				if( $.gQ.mouseTracker[1]  && playerShootingOn ){
 				//shoot missile here
 					var playerposx = $("#player").x();
 					var playerposy = $("#player").y();
@@ -351,7 +357,7 @@ $(function(){
 					}
 				});
 				
-				$("#console").html('Game Started / SCORE : ' + score);
+				$("#console").html('Game Started / SCORE : ' + score + ' / DATAS : ' + mousePosX + ' ' + playerPosX);
 		
 	}, REFRESH_RATE);
 	
