@@ -123,7 +123,7 @@ $(function(){
 	enemies[1]["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Weapon missile:
-	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-v1.png"});
+	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
 	missile["enemies"] = new Array(); // enemies's missiles have two animations
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	missile["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
@@ -182,7 +182,7 @@ $(function(){
 					var playerposx = $("#player").x();
 					var playerposy = $("#player").y();
 					var name = "playerMissle_"+Math.ceil(Math.random()*1000);
-					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 16, posy: playerposy, width: 8,height: 17});
+					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 17, posy: playerposy, width: 6,height: 14});
 					$("#"+name).addClass("playerMissiles");
 					playerShootingOn = false;
 				}
