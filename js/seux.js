@@ -22,6 +22,8 @@ var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
 var playerAnimationState = 0;
 var score = 0;
 var playerShootingOn = true;
+var enemiesBomb_1_number = 0;
+var playerBullet_1_number = 0;
 
 
 // Some helper functions : 
@@ -179,9 +181,14 @@ $(function(){
 				//if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is k to shoot!  reminder
 				if( $.gQ.mouseTracker[1]  && playerShootingOn ){
 				//shoot missile here
+				if(playerBullet_1_number<10){
+						playerBullet_1_number++;
+					}else{
+						playerBullet_1_number=0;
+					}
 					var playerposx = $("#player").x();
 					var playerposy = $("#player").y();
-					var name = "playerMissle_"+Math.ceil(Math.random()*1000);
+					var name = "playerMissle_"+playerBullet_1_number;
 					$("#playerMissileLayer").addSprite(name,{animation: missile["player"], posx: playerposx + 17, posy: playerposy, width: 6,height: 14});
 					$("#"+name).addClass("playerMissiles");
 					playerShootingOn = false;
@@ -214,8 +221,8 @@ $(function(){
 								return;   
 							}
 							// Detect if the hero is near below
-							if(nextpos>posx-80 && nextpos<posx+120 && !heroDetectedByTracker){
-								if(Math.random() < 0.03){
+							if(nextpos>posx-60 && nextpos<posx+140 && !heroDetectedByTracker){
+								if(Math.random() < 0.05){
 									$("#tracker")[0].enemy.speedx=0;
 									$("#tracker")[0].enemy.speedy=33;
 									heroDetectedByTracker=true;
@@ -224,19 +231,26 @@ $(function(){
 							}
 							
 							//Test for collision with the tracker
-							var collided = $(this).collision("#player,."+$.gQ.groupCssClass);
-							if(collided.length > 0){
+							var collidedTracker = $(this).collision("#player,."+$.gQ.groupCssClass);
+							if(collidedTracker.length > 0){
+																
 								//The player has been hit!
-								collided.each(function(){
+								
+								heroDetectedByTracker=false;
+								
+								collidedTracker.each(function(){
+									
 										$("#player").setAnimation(playerAnimation["hitted-1"],callback=playerAnimationStateSwitch);
 										playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
 									})
+									
 								$(this).remove();
-								heroDetectedByTracker=false;
+								
 								/*
 								$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
 								$(this).removeClass("enemiesMissiles");
 								* */
+								
 								if(playerAnimationState == 6){
 									alert('gameover');
 									}
@@ -249,7 +263,12 @@ $(function(){
 						if(Math.random() < 0.015){
 							var enemyposx = $(this).x();
 							var enemyposy = $(this).y();
-							var name = "enemiesBomb_1_"+Math.ceil(Math.random()*1000);
+							if(enemiesBomb_1_number<100){
+								enemiesBomb_1_number++;
+							}else{
+								enemiesBomb_1_number=0;
+							}
+							var name = "enemiesBomb_1_"+enemiesBomb_1_number;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["enemies"], posx: enemyposx+20, posy: enemyposy + 25, width: 20,height: 30});
 							$("#"+name).addClass("enemiesMissiles");
 						}
@@ -280,7 +299,7 @@ $(function(){
 										   
 									} else if(this.enemy instanceof Tracker){
 										
-										$(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();});
+										$(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();heroDetectedByTracker=false;});
 										score = score+20;
 										
 									}
@@ -341,11 +360,11 @@ $(function(){
 					}
 				});
 				
-				$("#console").html('Game Started / SCORE : ' + score );
+				$("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker);
 		
 	}, REFRESH_RATE);
 	
-		//This function manage the creation of the bombers
+		//This function manage the creation of the bombers // And the shooting of the player
 	$.playground().registerCallback(function(){
 		if(!gameOver){
 			if(!$(".bomber_1").length && Math.random() > 0.75){
@@ -408,7 +427,7 @@ $(function(){
 			}
 		} 
 		
-	}, 1000); //once per 1 second is enough for this
+	}, 2000); //once per 2 second is enough for this
 	
 	
 	
