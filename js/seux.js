@@ -246,7 +246,7 @@ $(function(){
 						}
 			//Make the enemies fire
 					if(this.enemy instanceof Bomber){
-						if(Math.random() < 0.02){
+						if(Math.random() < 0.015){
 							var enemyposx = $(this).x();
 							var enemyposy = $(this).y();
 							var name = "enemiesBomb_1_"+Math.ceil(Math.random()*1000);
@@ -304,7 +304,7 @@ $(function(){
 
 							$(this).setAnimation(missile["explode"], function(node){$(node).remove();});
 										 
-							score = score+2;
+							score = score+7;
 							
 							$(this).removeClass("enemiesMissiles");
 														
