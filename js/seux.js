@@ -193,14 +193,7 @@ $(function(){
 						var posy = $(this).y();// Used for the tracker
 						if(this.enemy instanceof Bomber){
 							
-							if(posx < -60 || posx > 560){
-								
-								if (this.id === "bomber_1") {
-									bomber_1=false;
-								 } 
-								if (this.id === "bomber_2") {
-									bomber_2=false;
-								 }    
+							if(posx < -60 || posx > 560){    
 								$(this).remove();
 								return;
 							}
