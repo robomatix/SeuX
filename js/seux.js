@@ -378,7 +378,13 @@ $(function(){
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
-		} 
+			
+			if(!playerShootingOn){// For the shooting of the player
+				playerShootingOn = true;
+			} 
+		}
+		
+
 		
 	}, 500); //once per 1/2 second is enough for this
 	
@@ -404,13 +410,6 @@ $(function(){
 		
 	}, 1000); //once per 1 second is enough for this
 	
-		//This function manage the shoring of the player
-	$.playground().registerCallback(function(){
-		if(!gameOver && !playerShootingOn){
-				playerShootingOn = true;
-		} 
-		
-	}, 500); //once per 1/2 second is enough for this
 	
 	
 
