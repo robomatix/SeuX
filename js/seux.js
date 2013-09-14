@@ -217,7 +217,6 @@ $(function(){
 							}
 							if(posy > 550){
 								$(this).remove();
-								tracker=false;
 								heroDetectedByTracker=false;
 								return;   
 							}
@@ -240,7 +239,6 @@ $(function(){
 										playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
 									})
 								$(this).remove();
-								tracker=false;
 								heroDetectedByTracker=false;
 								/*
 								$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
@@ -281,21 +279,14 @@ $(function(){
 						//An enemy has been hit!
 						collided.each(function(){
 						
-									if(this.enemy instanceof Bomber) {
+									if(this.enemy instanceof Bomber) {										
 										
-										if (this.id === "bomber_1") {
-											bomber_1=false;
-										} 
-										if (this.id === "bomber_2") {
-											bomber_2=false;
-										 } 
 										$(this).setAnimation(enemies[0]["explode"], function(node){$(node).remove();});
 										 score = score+10; 
 										 
 										   
 									} else if(this.enemy instanceof Tracker){
 										
-										tracker=false;
 										$(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();});
 										score = score+20;
 										
@@ -357,15 +348,14 @@ $(function(){
 					}
 				});
 				
-				$("#console").html('Game Started / SCORE : ' + score + ' / DATAS : ' + mousePosX + ' ' + playerPosX);
+				$("#console").html('Game Started / SCORE : ' + score );
 		
 	}, REFRESH_RATE);
 	
 		//This function manage the creation of the bombers
 	$.playground().registerCallback(function(){
 		if(!gameOver){
-			if(!bomber_1 && Math.random() > 0.75){
-					bomber_1=true;
+			if(!$(".bomber_1").length && Math.random() > 0.75){
 					var name = "bomber_1";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -376,12 +366,11 @@ $(function(){
 							bomber_1_speedx = enemies1SpeedX;
 					}
 					$("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 5,width: 60, height: 40});
-					$("#"+name).addClass("enemy");
+					$("#"+name).addClass("enemy").addClass(name);
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_1_speedx;
 			}
-			if(!bomber_2 && Math.random() > 0.65){
-					bomber_2=true;
+			if(!$(".bomber_2").length && Math.random() > 0.65){
 					var name = "bomber_2";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -392,7 +381,7 @@ $(function(){
 							bomber_2_speedx = enemies1SpeedX;
 					}
 					$("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 65,width: 60, height: 40});
-					$("#"+name).addClass("enemy");
+					$("#"+name).addClass("enemy").addClass(name);
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
@@ -403,8 +392,7 @@ $(function(){
 			//This function manage the creation of the tracker
 	$.playground().registerCallback(function(){
 		if(!gameOver){
-			if(!tracker && Math.random() > 0.75){
-					tracker=true;
+			if(!$(".tracker").length && Math.random() > 0.75){
 					var name = "tracker";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -415,7 +403,7 @@ $(function(){
 							tracker_speedx = enemies2SpeedX;
 					}
 					$("#enemiesActors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 120,width: 40, height: 36});
-					$("#"+name).addClass("enemy");
+					$("#"+name).addClass("enemy").addClass(name);
 					$("#"+name)[0].enemy = new Tracker($("#"+name));
 					$("#"+name)[0].enemy.speedx=tracker_speedx;
 			}
