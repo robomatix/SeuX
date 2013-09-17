@@ -161,7 +161,7 @@ $(function(){
 
 			
 			//Update the movement of the player:
-			mousePosX=$.gQ.mouseTracker['x']-($(window).width()/2)+(PLAYGROUND_WIDTH/2)
+			mousePosX=$.gQ.mouseTracker['x'];
 			playerPosX=$("#player").x();
 				//if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81] || ( mousePosX<playerPosX && mousePosX<playerPosX-20 ) ){ //this is left! (<- or w or q or mouse on the left) reminder
 				if( mousePosX<playerPosX && mousePosX<playerPosX-10 ){ //this is left! (<- or w or q or mouse on the left)
@@ -360,7 +360,7 @@ $(function(){
 					}
 				});
 				
-				$("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker);
+				$("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
 		
 	}, REFRESH_RATE);
 	
