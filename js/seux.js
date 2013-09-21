@@ -1,12 +1,14 @@
+
 // Global constants:
 var PLAYGROUND_WIDTH	= 500;
 var PLAYGROUND_HEIGHT	= 500;
 var REFRESH_RATE		= 30;
 
 // Global animation holder
+var mouseMarker     = new Array();
 var playerAnimation = new Array();
-var enemies = new Array(2); // There are two (three soon... ) kind of enemies in the game
-var missile = new Array();
+var enemies         = new Array(2); // There are two (three soon... ) kind of enemies in the game
+var missile         = new Array();
 
 
 // Global movement constants://px per frame
@@ -104,25 +106,28 @@ Tracker.prototype = new Enemy();
 // --                                      the main declaration:                                                     --
 // --------------------------------------------------------------------------------------------------------------------
 $(function(){
-	// Animations declaration: 
+	// Animations declaration:
 	
-	// Player space shipannimations:
-	playerAnimation["idle"]		= new $.gQ.Animation({imageURL: "images/hero.png"});
-	playerAnimation["hitted-1"]	= new $.gQ.Animation({imageURL: "images/hero-hitted-1.png", numberOfFrame: 2, delta: 40, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-	playerAnimation["damaged-1"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-1.png"});
-	playerAnimation["damaged-2"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-2.png"});
-	playerAnimation["damaged-3"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-3.png"});
-	playerAnimation["damaged-4"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-4.png"});
-	playerAnimation["damaged-5"]	= new $.gQ.Animation({imageURL: "images/hero-damaged-5.png"});
+	// Mouse marker
+	mouseMarker["idle"]					= new $.gQ.Animation({imageURL: "images/mouse-marker.png"}); 
+	
+	// Player space ship animations:
+	playerAnimation["idle"]				= new $.gQ.Animation({imageURL: "images/hero.png"});
+	playerAnimation["hitted-1"]			= new $.gQ.Animation({imageURL: "images/hero-hitted-1.png", numberOfFrame: 2, delta: 40, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	playerAnimation["damaged-1"]		= new $.gQ.Animation({imageURL: "images/hero-damaged-1.png"});
+	playerAnimation["damaged-2"]		= new $.gQ.Animation({imageURL: "images/hero-damaged-2.png"});
+	playerAnimation["damaged-3"]		= new $.gQ.Animation({imageURL: "images/hero-damaged-3.png"});
+	playerAnimation["damaged-4"]		= new $.gQ.Animation({imageURL: "images/hero-damaged-4.png"});
+	playerAnimation["damaged-5"]		= new $.gQ.Animation({imageURL: "images/hero-damaged-5.png"});
 	
 	//  List of enemies animations :
 	// 1st kind of enemy:
-	enemies[0] = new Array(); // enemies have two animations
-	enemies[0]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
-	enemies[0]["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-	enemies[1] = new Array(); // enemies have two animations
-	enemies[1]["idle"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
-	enemies[1]["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	enemies[0] 							= new Array(); // enemies have two animations
+	enemies[0]["idle"]					= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
+	enemies[0]["explode"]				= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	enemies[1] 							= new Array(); // enemies have two animations
+	enemies[1]["idle"]					= new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
+	enemies[1]["explode"]				= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Weapon missile:
 	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
@@ -141,6 +146,7 @@ $(function(){
 					
 					.addGroup("heroActor", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
 							.addSprite("player",{animation: playerAnimation["idle"], posx: (PLAYGROUND_WIDTH/2)-20, posy: 455, width: 40, height: 40})
+							.addSprite("mouseMarker",{animation: mouseMarker["idle"], posx: (PLAYGROUND_WIDTH/2)-20, posy: 498, width: 40, height: 2})
 							.end()
 							.addGroup("playerMissileLayer",{width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
 	
@@ -151,18 +157,27 @@ $(function(){
 		$("#console").html('click');
 		$.playground().startGame(function(){
 			$("#welcomeScreen").fadeTo(1000,0,function(){$(this).remove();});
+			$("#playground").css("cursor", "none");			
 			$("#console").html('Game Started');
 		});
 	})
 	
 	// this is the function that control most of the game logic 
 	$.playground().registerCallback(function(){
+		
+			// Gather PosX needed
+			mousePosX=$.gQ.mouseTracker['x'];
+			playerPosX=$("#player").x();
+		
+		
+			//Update the position of the mouseMarker
+			mouseTrackerPosX=mousePosX;
+			if(mousePosX>459){ mouseTrackerPosX = 460;}
+			$("#mouseMarker").x(mouseTrackerPosX);
 
 
 			
 			//Update the movement of the player:
-			mousePosX=$.gQ.mouseTracker['x'];
-			playerPosX=$("#player").x();
 				//if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81] || ( mousePosX<playerPosX && mousePosX<playerPosX-20 ) ){ //this is left! (<- or w or q or mouse on the left) reminder
 				if( mousePosX<playerPosX && mousePosX<playerPosX-10 ){ //this is left! (<- or w or q or mouse on the left)
 					var nextpos = playerPosX-playerMove;
@@ -245,12 +260,7 @@ $(function(){
 									})
 									
 								$(this).remove();
-								
-								/*
-								$(this).setAnimation(missile["enemiesexplode"], function(node){$(node).remove();});
-								$(this).removeClass("enemiesMissiles");
-								* */
-								
+																
 								if(playerAnimationState == 6){
 									alert('gameover');
 									}
@@ -258,7 +268,7 @@ $(function(){
 							
 							
 						}
-			//Make the enemies fire
+					//Make the enemies fire
 					if(this.enemy instanceof Bomber){
 						if(Math.random() < 0.015){
 							var enemyposx = $(this).x();
@@ -275,7 +285,7 @@ $(function(){
 					}
 
 					});
-		//Update the movement of the missiles
+			//Update the movement of the missiles
 			$(".playerMissiles").each(function(){
 					var posy = $(this).y();
 					if(posy < 0){
@@ -407,7 +417,7 @@ $(function(){
 		
 	}, 500); //once per 1/2 second is enough for this
 	
-			//This function manage the creation of the tracker
+	//This function manage the creation of the tracker
 	$.playground().registerCallback(function(){
 		if(!gameOver){
 			if(!$(".tracker").length && Math.random() > 0.75){

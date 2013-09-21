@@ -59,9 +59,21 @@
 		</style>
 <meta name="robots" content="noindex, nofollow">
 
+<script>
+        $(document).ready(function(){
+            // Disable the selection on the page -> http://stackoverflow.com/questions/2700000/how-to-disable-text-selection-using-jquery
+			$("html,body").css("-webkit-user-select","none");
+            $("html,body").css("-moz-user-select","none");
+            $("html,body").css("-ms-user-select","none");
+            $("html,body").css("-o-user-select","none");
+            $("html,body").css("user-select","none");
+        });
+</script>
+
 </head>
 <body>
-<div id="game">
+
+<section id="game">
 	<div id="playground" style="width: 500px; height: 500px; background: black;">
 		<div id="welcomeScreen" style="width: 500px; height: 250px; position: absolute; z-index: 100; background-image: url(logo.png); font-family: verdana, sans-serif;">
 			<div style="position: absolute; top: 120px; width: 700px; color: white;">
@@ -70,7 +82,8 @@
 		</div><!-- #playground -->
 	</div><!-- #game -->
 	<div id="console">Pouet</div>
-</div>
+</section><!--#game-->
+
 </body>
 </html>
 
