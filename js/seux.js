@@ -16,6 +16,7 @@ var playerMove = 10;
 var enemies1SpeedX = 4;
 var enemies2SpeedX = 6;
 var BOMB_1_SPEED = 4;
+var TRACKER_RAY_SPEED = 10;
 var MISSILE_PLAYER_SPEED = -12;
 
 // Game state
@@ -26,6 +27,7 @@ var score = 0;
 var playerShootingOn = true;
 var enemiesBomb_1_number = 0;
 var playerBullet_1_number = 0;
+var trackerRay_number = 0;
 
 
 // Some helper functions : 
@@ -134,6 +136,7 @@ $(function(){
 	missile["enemies"] = new Array(); // enemies's missiles have two animations
 	missile["enemies"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	missile["explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	missile["tracker-ray"] = new $.gQ.Animation({imageURL: "images/tracker-ray.png"});
 	
 	// Initialize the game:
 	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true, mouseTracker: true});
@@ -237,11 +240,24 @@ $(function(){
 							}
 							// Detect if the hero is near below
 							if(nextpos>posx-60 && nextpos<posx+140 && !heroDetectedByTracker){
-								if(Math.random() < 0.05){
+								xTrackerFactor = Math.random();
+								if( xTrackerFactor < 0.05){// Go down
 									$("#tracker")[0].enemy.speedx=0;
 									$("#tracker")[0].enemy.speedy=33;
 									heroDetectedByTracker=true;
 									return;
+								}else if( xTrackerFactor > 0.75){// Fire
+										if(trackerRay_number<100){
+											trackerRay_number++;
+										}else{
+											trackerRay_number=0;
+										}
+										var name = "trackerRay_1-"+trackerRay_number;
+										$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
+										$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
+										var name = "trackerRay_2-"+trackerRay_number;
+										$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
+										$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
 								}
 							}
 							
@@ -292,7 +308,9 @@ $(function(){
 						$(this).remove();
 						return;
 					}
+					
 					$(this).y(MISSILE_PLAYER_SPEED, true);
+
 					//Test for collisions with enemies
 					var collided = $(this).collision(".enemy,."+$.gQ.groupCssClass);
 
@@ -354,7 +372,11 @@ $(function(){
 						$(this).remove();
 						return;
 					}
-					$(this).y(BOMB_1_SPEED, true);
+					if($(this).hasClass( "trackerRay" )){// Tracker Rays
+						$(this).y(TRACKER_RAY_SPEED, true);
+					}else{// Bombs
+						$(this).y(BOMB_1_SPEED, true);
+					}
 					//Test for collisions
 					var collided = $(this).collision("#player,."+$.gQ.groupCssClass);
 					if(collided.length > 0){
@@ -439,9 +461,5 @@ $(function(){
 		
 	}, 2000); //once per 2 second is enough for this
 	
-	
-	
-
-
 });
 
