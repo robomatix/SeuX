@@ -240,6 +240,9 @@ $(function(){
 								heroDetectedByTracker=false;
 								return;   
 							}
+							
+							// Random value use for going down and firing
+							xTrackerFactor = Math.random();
 							// Detect if the hero is near below
 							if(nextpos>posx-60 && nextpos<posx+140 && !heroDetectedByTracker){
 								xTrackerFactor = Math.random();
@@ -248,7 +251,10 @@ $(function(){
 									$("#tracker")[0].enemy.speedy=33;
 									heroDetectedByTracker=true;
 									return;
-								}else if( xTrackerFactor > 0.75){// Fire
+								}
+								//
+								
+								if( xTrackerFactor > 0.35){// Fire
 										if(trackerRay_number<100){
 											trackerRay_number++;
 										}else{
