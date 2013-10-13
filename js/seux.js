@@ -28,6 +28,8 @@ var playerShootingOn = true;
 var enemiesBomb_1_number = 0;
 var playerBullet_1_number = 0;
 var trackerRay_number = 0;
+var timeSeconds = 0;
+var level = 1;
 
 
 // Some helper functions : 
@@ -396,9 +398,11 @@ $(function(){
 		
 	}, REFRESH_RATE);
 	
-		//This function manage the creation of the bombers // And the shooting of the player
+		//This function manage the creation of the bombers and the creation of the tracker// And the shooting of the player
 	$.playground().registerCallback(function(){
 		if(!gameOver){
+			
+			// Bomber 1
 			if(!$(".bomber_1").length && Math.random() > 0.75){
 					var name = "bomber_1";
 					// Appears on the right or on the left ?
@@ -414,7 +418,9 @@ $(function(){
 					$("#"+name)[0].enemy = new Bomber($("#"+name));
 					$("#"+name)[0].enemy.speedx=bomber_1_speedx;
 			}
-			if(!$(".bomber_2").length && Math.random() > 0.65){
+			
+			// Bomber 2
+			if(!$(".bomber_2").length && Math.random() > 0.65  && level >= 2){
 					var name = "bomber_2";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -430,19 +436,8 @@ $(function(){
 					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
 			
-			if(!playerShootingOn){// For the shooting of the player
-				playerShootingOn = true;
-			} 
-		}
-		
-
-		
-	}, 500); //once per 1/2 second is enough for this
-	
-	//This function manage the creation of the tracker
-	$.playground().registerCallback(function(){
-		if(!gameOver){
-			if(!$(".tracker").length && Math.random() > 0.75){
+			// tracker
+			if(!$(".tracker").length && Math.random() > 0.75 && level >= 3){
 					var name = "tracker";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -457,9 +452,37 @@ $(function(){
 					$("#"+name)[0].enemy = new Tracker($("#"+name));
 					$("#"+name)[0].enemy.speedx=tracker_speedx;
 			}
+			
+			// Shotting of the player
+			if(!playerShootingOn){// For the shooting of the player
+				playerShootingOn = true;
+			} 
+			
+
+			
+		}
+		
+
+		
+	}, 500); //once per 1/2 second is enough for this
+	
+	
+		//This function manage the time and the level
+	$.playground().registerCallback(function(){
+		if(!gameOver){
+			timeSeconds++; // Incrementation seconds
+			if( timeSeconds % 15 == 0 ){ // Modulo sur 15
+				level++;
+				$("#level").html(level);
+				}
+			if(timeSeconds <10){
+				timeSeconds = '0'+timeSeconds;
+			}
+			$("#timeSeconds").html(timeSeconds);
+	
 		} 
 		
-	}, 2000); //once per 2 second is enough for this
+	}, 1000); //once per 1 second
 	
 });
 
