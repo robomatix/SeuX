@@ -25,6 +25,7 @@ var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
 var playerAnimationState = 0;
 var score = 0;
 var playerShootingOn = true;
+var trackerShootingOn = false;
 var enemiesBomb_1_number = 0;
 var playerBullet_1_number = 0;
 var trackerRay_number = 0;
@@ -213,7 +214,7 @@ $(function(){
 					$("#"+name).addClass("playerMissiles");
 					playerShootingOn = false;
 				}
-			//Update the movement of the enemies
+			//Update the movement of the enemies and make them fired
 				$(".enemy").each(function(){
 						this.enemy.update($("#player"));
 						var posx = $(this).x();
@@ -252,21 +253,7 @@ $(function(){
 									heroDetectedByTracker=true;
 									return;
 								}
-								//
-								
-								if( xTrackerFactor > 0.35){// Fire
-										if(trackerRay_number<100){
-											trackerRay_number++;
-										}else{
-											trackerRay_number=0;
-										}
-										var name = "trackerRay_1-"+trackerRay_number;
-										$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
-										$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
-										var name = "trackerRay_2-"+trackerRay_number;
-										$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
-										$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
-								}
+
 							}
 							
 							//Test for collision with the tracker
@@ -307,8 +294,26 @@ $(function(){
 							$("#"+name).addClass("enemiesMissiles");
 						}
 					}
-
-					});
+					
+					if(this.enemy instanceof Tracker){
+					
+					if( xTrackerFactor > 0.25 && trackerShootingOn){// xTrackerFactor come from the movement of the tracker 
+						if(trackerRay_number<100){
+							trackerRay_number++;
+						}else{
+							trackerRay_number=0;
+						}
+						var name = "trackerRay_1-"+trackerRay_number;
+						$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
+						$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
+						var name = "trackerRay_2-"+trackerRay_number;
+						$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
+						$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
+						trackerShootingOn = false;
+						}
+					}
+								
+				});
 			//Update the movement of the missiles
 			$(".playerMissiles").each(function(){
 					var posy = $(this).y();
@@ -458,11 +463,16 @@ $(function(){
 					$("#"+name)[0].enemy = new Tracker($("#"+name));
 					$("#"+name)[0].enemy.speedx=tracker_speedx;
 			}
-			
+			// Shoting of the tracker
+			if(!trackerShootingOn){// For the shooting of the player
+				trackerShootingOn = true;
+			} 
 			// Shotting of the player
 			if(!playerShootingOn){// For the shooting of the player
 				playerShootingOn = true;
 			} 
+			
+			
 			
 
 			
