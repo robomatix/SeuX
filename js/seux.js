@@ -400,11 +400,13 @@ $(function(){
 							})
 						$(this).remove();
 						if(playerAnimationState == 6){
-							alert('gameover');
+							alert('Game Over');
 							}
 					}
 				});
-				
+				if(timeSeconds >= 60 && timeSeconds < 61){
+							alert('Time Over');
+				}
 				$("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
 		
 	}, REFRESH_RATE);
