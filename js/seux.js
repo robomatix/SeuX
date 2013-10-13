@@ -7,21 +7,21 @@ var REFRESH_RATE		= 30;
 // Global animation holder
 var mouseMarker     = new Array();
 var playerAnimation = new Array();
-var enemies         = new Array(2); // There are two (three soon... ) kind of enemies in the game
-var missile         = new Array();
+var enemies         = new Array(3); // There are three kind of enemies in the game
+var missile         = new Array(5); // There are five kind of missile in the game
 
 
 // Global movement constants://px per frame
 var playerMove = 10;
-var enemies1SpeedX = 4;
-var enemies2SpeedX = 6;
-var BOMB_1_SPEED = 4;
-var TRACKER_RAY_SPEED = 10;
-var MISSILE_PLAYER_SPEED = -12;
+var enemies1SpeedX = 5;
+var enemies2SpeedX = 8;
+var BOMB_1_SPEED = 5;
+var TRACKER_RAY_SPEED = 12;
+var MISSILE_PLAYER_SPEED = -14;
 
 // Game state
 var gameOver = false;
-var bomber_1 = bomber_2 = tracker = heroDetectedByTracker = false;
+var heroDetectedByTracker = false;
 var playerAnimationState = 0;
 var score = 0;
 var playerShootingOn = true;
@@ -60,7 +60,6 @@ function playerAnimationStateSwitch(){
 					break;
 				}
 	}
-
 // Game objects:
 function Player(node){
 
@@ -69,6 +68,7 @@ function Player(node){
 	
 	return true;
 }
+// Enemy
 function Enemy(node){
 	this.shield	= 1;
 	this.speedx	= enemies1SpeedX;
@@ -98,14 +98,22 @@ function Enemy(node){
 		this.node.y(this.speedy, true);
 	};
 }
+// Bomber
 function Bomber(node){
 	this.node = $(node);
 }
 Bomber.prototype = new Enemy();
+// Tracker
 function Tracker(node){
 	this.node = $(node);
 }
 Tracker.prototype = new Enemy();
+// Boss
+function Boss(node){
+	this.node = $(node);
+	//this.shield	= 4;
+}
+Boss.prototype = new Enemy();
 
 // --------------------------------------------------------------------------------------------------------------------
 // --                                      the main declaration:                                                     --
@@ -127,12 +135,16 @@ $(function(){
 	
 	//  List of enemies animations :
 	// 1st kind of enemy:
-	enemies[0] 							= new Array(); // enemies have two animations
+	enemies[0] 							= new Array(2); // enemies have two animations
 	enemies[0]["idle"]					= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
 	enemies[0]["explode"]				= new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	enemies[1] 							= new Array(); // enemies have two animations
 	enemies[1]["idle"]					= new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
 	enemies[1]["explode"]				= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+	// Boss
+	enemies[2] 							= new Array(2); // enemies have two animations
+	enemies[2]["idle"]					= new $.gQ.Animation({imageURL: "images/boss-1.png"});
+	enemies[2]["explode"]				= new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	
 	// Weapon missile:
 	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
@@ -227,7 +239,7 @@ $(function(){
 							}
 							
 						}
-						if(this.enemy instanceof Tracker){
+						if(this.enemy instanceof Tracker ){
 							if(posx < 0){
 								$("#tracker")[0].enemy.speedx=enemies2SpeedX;   
 								return;
@@ -276,6 +288,23 @@ $(function(){
 									alert('gameover');
 									}
 							}
+							
+							
+							
+							
+						}
+						
+						if(this.enemy instanceof Boss ){
+							if(posx < -60){
+								$("#boss_1")[0].enemy.speedx=enemies2SpeedX;   
+								return;
+							}
+							if(posx > 440){
+								$("#boss_1")[0].enemy.speedx=-enemies2SpeedX;   
+								return;
+							}
+							
+							
 							
 							
 						}
@@ -335,7 +364,11 @@ $(function(){
 									if(this.enemy instanceof Bomber) {										
 										
 										$(this).setAnimation(enemies[0]["explode"], function(node){$(node).remove();});
-										 score = score+10; 
+										 score = score+10;
+										 bomberId = $(this).attr('id');
+										 bomberId2false(bomberId);
+
+
 										 
 										   
 									} else if(this.enemy instanceof Tracker){
@@ -411,12 +444,12 @@ $(function(){
 		
 	}, REFRESH_RATE);
 	
-		//This function manage the creation of the bombers and the creation of the tracker// And the shooting of the player
+		//This function manage the creation of the enemies // And the shooting of the player
 	$.playground().registerCallback(function(){
 		if(!gameOver){
 			
 			// Bomber 1
-			if(!$(".bomber_1").length && Math.random() > 0.75){
+			if(!$(".bomber_1").length && Math.random() > 0.40 && level <= 3){
 					var name = "bomber_1";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -433,7 +466,7 @@ $(function(){
 			}
 			
 			// Bomber 2
-			if(!$(".bomber_2").length && Math.random() > 0.65  && level >= 2){
+			if(!$(".bomber_2").length && Math.random() > 0.60  && level >= 2 && level <= 3){
 					var name = "bomber_2";
 					// Appears on the right or on the left ?
 					if(Math.random() > 0.5){//Right
@@ -449,7 +482,7 @@ $(function(){
 					$("#"+name)[0].enemy.speedx=bomber_2_speedx;
 			}
 			
-			// tracker
+			// Tracker
 			if(!$(".tracker").length && Math.random() > 0.75 && level >= 3){
 					var name = "tracker";
 					// Appears on the right or on the left ?
@@ -465,6 +498,24 @@ $(function(){
 					$("#"+name)[0].enemy = new Tracker($("#"+name));
 					$("#"+name)[0].enemy.speedx=tracker_speedx;
 			}
+			// THE BOSS
+			if(!$(".boss_1").length && !$(".bomber_1").length && !$(".bomber_2").length && Math.random() > 0.69 && level >= 4){
+					var name = "boss_1";
+					// Appears on the right or on the left ?
+					if(Math.random() > 0.5){//Right
+							boss_posx = 620;
+							boss_speedx = -enemies2SpeedX;						
+						}else{//Left
+							boss_posx = -120;
+							boss_speedx = enemies2SpeedX;
+					}
+					$("#enemiesActors").addSprite(name, {animation: enemies[2]["idle"], posx: boss_posx, posy: 20,width: 120, height: 90});
+					$("#"+name).addClass("enemy").addClass(name);
+					$("#"+name)[0].enemy = new Boss($("#"+name));
+					$("#"+name)[0].enemy.speedx=boss_speedx;
+			}
+			
+			
 			// Shoting of the tracker
 			if(!trackerShootingOn){// For the shooting of the player
 				trackerShootingOn = true;
