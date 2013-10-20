@@ -151,12 +151,15 @@ $(function(){
 	
 	// Weapon missile:
 	missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
-	missile["bomber-bomb"] = new Array(); // bomber's bomb have two animations
+	//missile["bomber-bomb"] = new Array(); // bomber's bomb have two animations
 	missile["bomber-bomb"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
 	missile["bomber-bomb-explode"]	= new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 	missile["bomber-green-ray"] = new $.gQ.Animation({imageURL: "images/bomber-green-ray.png"});
 	missile["bomber-red-ray"] = new $.gQ.Animation({imageURL: "images/bomber-red-ray.png"});
 	missile["tracker-ray"] = new $.gQ.Animation({imageURL: "images/tracker-ray.png"});
+	missile["boss-1-large-ray"] = new $.gQ.Animation({imageURL: "images/boss-1-large-ray-1.png", numberOfFrame: 2, delta: 10, rate: 120, type: $.gQ.ANIMATION_VERTICAL});
+	
+	
 	
 	// Initialize the game:
 	$("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH, keyTracker: true, mouseTracker: true});
@@ -328,7 +331,7 @@ $(function(){
 							}
 							var name = "enemiesBomb_1_"+enemiesBomb_1_number;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-bomb"], posx: enemyposx+20, posy: enemyposy + 25, width: 20,height: 30});
-							$("#"+name).addClass("enemiesMissiles");
+							$("#"+name).addClass("enemiesMissiles").addClass("bomberBomb")
 						}
 						
 						//Fires colored ray
@@ -380,20 +383,34 @@ $(function(){
 					
 					if(this.enemy instanceof Tracker){
 					
-					if( xTrackerFactor > 0.25 && trackerShootingOn){// xTrackerFactor come from the movement of the tracker 
-						if(trackerRay_number<100){
-							trackerRay_number++;
-						}else{
-							trackerRay_number=0;
-						}
-						var name = "trackerRay_1-"+trackerRay_number;
-						$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
-						$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
-						var name = "trackerRay_2-"+trackerRay_number;
-						$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
-						$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
-						trackerShootingOn = false;
-						}
+						if( xTrackerFactor > 0.25 && trackerShootingOn){// xTrackerFactor come from the movement of the tracker 
+							if(trackerRay_number<100){
+								trackerRay_number++;
+							}else{
+								trackerRay_number=0;
+							}
+							var name = "trackerRay_1-"+trackerRay_number;
+							$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
+							$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
+							var name = "trackerRay_2-"+trackerRay_number;
+							$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
+							$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
+							trackerShootingOn = false;
+							}
+					}
+					
+					if(this.enemy instanceof Boss){
+						
+							if( Math.random() < 0.066){
+							if(trackerRay_number<100){
+								trackerRay_number++;
+							}else{
+								trackerRay_number=0;
+							}
+							var name = "boss_1_LargeRay_1-"+trackerRay_number;
+							$("#enemiesMissileLayer").addSprite(name,{animation: missile["boss-1-large-ray"], posx: posx+4, posy: posy + 22, width: 104,height: 10});
+							$("#"+name).addClass("enemiesMissiles").addClass("boss_1_LargeRay_1");
+							}
 					}
 								
 				});
@@ -471,13 +488,26 @@ $(function(){
 					if(collidedMissile.length > 0){
 
 						//An enemy missile has been hit!
-						collidedMissile.each(function(){						
+						collidedMissile.each(function(){
+							
+							if($(this).hasClass( "bomberBomb" )){					
 
-							$(this).setAnimation(missile["bomber-bomb-explode"], function(node){$(node).remove();});
+								$(this).setAnimation(missile["bomber-bomb-explode"], function(node){$(node).remove();});
+							
+							}else{
+								
+								if(!$(this).hasClass( "boss_1_LargeRay_1" )){
+							
+									$(this).remove();	
+							
+								}
+							}
 										 
 							score = score+7;
 							
-							$(this).removeClass("enemiesMissiles");
+							if(!$(this).hasClass( "boss_1_LargeRay_1" )){
+								$(this).removeClass("enemiesMissiles");
+							}
 														
 							})
 							
@@ -496,7 +526,7 @@ $(function(){
 						$(this).remove();
 						return;
 					}
-					if($(this).hasClass( "trackerRay" ) || $(this).hasClass( "bomberRay" )){// Tracker Rays
+					if($(this).hasClass( "trackerRay" ) || $(this).hasClass( "bomberRay" ) || $(this).hasClass( "boss_1_LargeRay_1" )){// Rays
 						$(this).y(TRACKER_RAY_SPEED, true);
 					}else{// Bombs
 						$(this).y(BOMB_1_SPEED, true);
