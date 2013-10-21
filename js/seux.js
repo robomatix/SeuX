@@ -3,6 +3,7 @@
 var PLAYGROUND_WIDTH	= 500;
 var PLAYGROUND_HEIGHT	= 500;
 var REFRESH_RATE		= 30;
+var ENEMIES_MISSILE_NUMBER_MAX = 100000;
 
 // Global animation holder
 var mouseMarker     = new Array();
@@ -26,9 +27,8 @@ var playerAnimationState = 0;
 var score = 0;
 var playerShootingOn = true;
 var trackerShootingOn = false;
-var enemiesBomb_1_number = 0;
+var enemiesMissileNumber = 0;
 var playerBullet_1_number = 0;
-var trackerRay_number = 0;
 var timeSeconds = 0;
 var level = 1;
 
@@ -324,12 +324,12 @@ $(function(){
 						bomber_random_fire = Math.random();
 						// Drops the bomb
 						if(bomber_random_fire < 0.015){							
-							if(enemiesBomb_1_number<100){
-								enemiesBomb_1_number++;
+							if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+								enemiesMissileNumber++;
 							}else{
-								enemiesBomb_1_number=0;
+								enemiesMissileNumber=0;
 							}
-							var name = "enemiesBomb_1_"+enemiesBomb_1_number;
+							var name = "enemiesBomb_1_"+enemiesMissileNumber;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-bomb"], posx: enemyposx+20, posy: enemyposy + 25, width: 20,height: 30});
 							$("#"+name).addClass("enemiesMissiles").addClass("bomberBomb")
 						}
@@ -337,44 +337,44 @@ $(function(){
 						//Fires colored ray
 						if(level > 1 && level <= 3 && $(this).hasClass("bomber_1")){
 							if(bomber_random_fire >= 0.020 && bomber_random_fire < 0.040){	
-								if(enemiesBomb_1_number<100){
-									enemiesBomb_1_number++;
+								if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+									enemiesMissileNumber++;
 									}else{
-									enemiesBomb_1_number=0;
+									enemiesMissileNumber=0;
 								}
-									var name = "enemyBomberGreenRay_1_"+enemiesBomb_1_number;
+									var name = "enemyBomberGreenRay_1_"+enemiesMissileNumber;
 									$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6,height: 17});
 									$("#"+name).addClass("enemiesMissiles").addClass("bomberRay");
 							
 							}else if(bomber_random_fire >= 0.040 && bomber_random_fire < 0.060){
-									if(enemiesBomb_1_number<100){
-										enemiesBomb_1_number++;
+									if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+										enemiesMissileNumber++;
 									}else{
-										enemiesBomb_1_number=0;
+										enemiesMissileNumber=0;
 									}
-									var name = "enemyBomberRedRay_1_"+enemiesBomb_1_number;
+									var name = "enemyBomberRedRay_1_"+enemiesMissileNumber;
 									$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6,height: 17});
 									$("#"+name).addClass("enemiesMissiles").addClass("bomberRay");
 							}
 						}
 						if(level > 2 && level <= 3 && $(this).hasClass("bomber_2")){
 							if(bomber_random_fire >= 0.060 && bomber_random_fire < 0.080){	
-								if(enemiesBomb_1_number<100){
-									enemiesBomb_1_number++;
+								if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+									enemiesMissileNumber++;
 									}else{
-									enemiesBomb_1_number=0;
+									enemiesMissileNumber=0;
 								}
-									var name = "enemyBomberGreenRay_2_"+enemiesBomb_1_number;
+									var name = "enemyBomberGreenRay_2_"+enemiesMissileNumber;
 									$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6,height: 17});
 									$("#"+name).addClass("enemiesMissiles").addClass("bomberRay");
 							
 							}else if(bomber_random_fire >= 0.080 && bomber_random_fire < 0.1){
-									if(enemiesBomb_1_number<100){
-										enemiesBomb_1_number++;
+									if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+										enemiesMissileNumber++;
 									}else{
-										enemiesBomb_1_number=0;
+										enemiesMissileNumber=0;
 									}
-									var name = "enemyBomberRedRay_2_"+enemiesBomb_1_number;
+									var name = "enemyBomberRedRay_2_"+enemiesMissileNumber;
 									$("#enemiesMissileLayer").addSprite(name,{animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6,height: 17});
 									$("#"+name).addClass("enemiesMissiles").addClass("bomberRay");
 							}
@@ -384,15 +384,15 @@ $(function(){
 					if(this.enemy instanceof Tracker){
 					
 						if( xTrackerFactor > 0.25 && trackerShootingOn){// xTrackerFactor come from the movement of the tracker 
-							if(trackerRay_number<100){
-								trackerRay_number++;
+							if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+								enemiesMissileNumber++;
 							}else{
-								trackerRay_number=0;
+								enemiesMissileNumber=0;
 							}
-							var name = "trackerRay_1-"+trackerRay_number;
+							var name = "trackerRay_1-"+enemiesMissileNumber;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+4, posy: posy + 36, width: 2,height: 17});
 							$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
-							var name = "trackerRay_2-"+trackerRay_number;
+							var name = "trackerRay_2-"+enemiesMissileNumber;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["tracker-ray"], posx: posx+36, posy: posy + 36, width: 2,height: 17});
 							$("#"+name).addClass("enemiesMissiles").addClass("trackerRay");
 							trackerShootingOn = false;
@@ -402,12 +402,12 @@ $(function(){
 					if(this.enemy instanceof Boss){
 						
 							if( Math.random() < 0.066){
-							if(trackerRay_number<100){
-								trackerRay_number++;
+							if(enemiesMissileNumber<ENEMIES_MISSILE_NUMBER_MAX){
+								enemiesMissileNumber++;
 							}else{
-								trackerRay_number=0;
+								enemiesMissileNumber=0;
 							}
-							var name = "boss_1_LargeRay_1-"+trackerRay_number;
+							var name = "boss_1_LargeRay_1-"+enemiesMissileNumber;
 							$("#enemiesMissileLayer").addSprite(name,{animation: missile["boss-1-large-ray"], posx: posx+4, posy: posy + 22, width: 104,height: 10});
 							$("#"+name).addClass("enemiesMissiles").addClass("boss_1_LargeRay_1");
 							}
