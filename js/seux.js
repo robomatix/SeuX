@@ -194,6 +194,7 @@ $(function() {
 
     //this is the HUD for the player life and shield
     $("#overlay").append("<div id='gameInformations'style='color: white; width: 50%; position: absolute; left: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div><div id='playerInformations'style='color: white; width: 50%; position: absolute; right: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div>");
+    $("#overlay").append("<div id='gameDialog'style='color: white; width: 100%; position: absolute; top: 250px; font-family: verdana, sans-serif; text-align: center; font-size: 3em;'></div>");
 
     //initialize the start button
     $("#startbutton").click(function() {
@@ -202,6 +203,7 @@ $(function() {
             $("#welcomeScreen").fadeTo(1000, 0, function() {
                 $(this).remove();
             });
+            $("#gameDialog").html('LEVEL : ' + level).fadeTo(500, 1).fadeTo(1000, 0);
             $("#playground").css("cursor", "none");
             $("#console").html('Game Started');
         });
@@ -486,7 +488,7 @@ $(function() {
                                         $(node).remove();
                                     });
                                     score = score + 190;
-                                    alert('You Win !!!');
+                                    gameOver = true;
                                     break;
                             }
 
@@ -574,7 +576,7 @@ $(function() {
 
             $("#gameInformations").html('COUNTDOWN : ' + remainingTime + ' / LEVEL : ' + level);
             $("#playerInformations").html('SHIELD : ' + $("#player")[0].player.shield + ' / SCORE : ' + score);
-            
+
             $("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
 
         }// End !gameOver
@@ -598,7 +600,7 @@ $(function() {
                     bomber_1_posx = -60;
                     bomber_1_speedx = enemies1SpeedX;
                 }
-                $("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 5, width: 60, height: 40});
+                $("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_1_posx, posy: 15, width: 60, height: 40});
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Bomber($("#" + name));
                 $("#" + name)[0].enemy.speedx = bomber_1_speedx;
@@ -617,7 +619,7 @@ $(function() {
                     bomber_2_posx = -60;
                     bomber_2_speedx = enemies1SpeedX;
                 }
-                $("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 65, width: 60, height: 40});
+                $("#enemiesActors").addSprite(name, {animation: enemies[0]["idle"], posx: bomber_2_posx, posy: 75, width: 60, height: 40});
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Bomber($("#" + name));
                 $("#" + name)[0].enemy.speedx = bomber_2_speedx;
@@ -636,7 +638,7 @@ $(function() {
                     tracker_posx = -40;
                     tracker_speedx = enemies2SpeedX;
                 }
-                $("#enemiesActors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 120, width: 40, height: 36});
+                $("#enemiesActors").addSprite(name, {animation: enemies[1]["idle"], posx: tracker_posx, posy: 130, width: 40, height: 36});
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Tracker($("#" + name));
                 $("#" + name)[0].enemy.speedx = tracker_speedx;
@@ -693,7 +695,7 @@ $(function() {
             timeSeconds++; // Incrementation seconds
             if (timeSeconds % 15 === 0) { // Modulo sur 15
                 level++;
-                $("#level").html(level);
+                $("#gameDialog").html('LEVEL : ' + level).fadeTo(500, 1).fadeTo(1000, 0);
             }
             if (timeSeconds < 10) {
                 timeSeconds = '0' + timeSeconds;
