@@ -65,7 +65,18 @@ function playerAnimationStateSwitch() {
 function Player(node) {
 
     this.node = node;
-    //this.animations = animations;
+    this.shield = 5;
+
+    // This function damage the hero ship and return true if this cause the ship to die 
+    this.damage = function() {
+
+        this.shield--;
+        if (this.shield === 0) {
+            return true;
+        }
+        return false;
+
+    };
 
     return true;
 }
@@ -175,9 +186,13 @@ $(function() {
             .addSprite("player", {animation: playerAnimation["idle"], posx: (PLAYGROUND_WIDTH / 2) - 20, posy: 455, width: 40, height: 40})
             .addSprite("mouseMarker", {animation: mouseMarker["idle"], posx: (PLAYGROUND_WIDTH / 2) - 20, posy: 498, width: 40, height: 2})
             .end()
-            .addGroup("playerMissileLayer", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+            .addGroup("playerMissileLayer", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+            .addGroup("overlay", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
 
     $("#player")[0].player = new Player($("#player"));
+
+    //this is the HUD for the player life and shield
+    $("#overlay").append("<div id='gameInformations'style='color: white; width: 50%; position: absolute; left: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div><div id='playerInformations'style='color: white; width: 50%; position: absolute; right: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div>");
 
     //initialize the start button
     $("#startbutton").click(function() {
@@ -194,388 +209,387 @@ $(function() {
     // this is the function that control most of the game logic 
     $.playground().registerCallback(function() {
 
-        // Gather PosX needed
-        mousePosX = $.gQ.mouseTracker['x'];
-        playerPosX = $("#player").x();
+        if (!gameOver) {
+
+            // Gather PosX needed
+            mousePosX = $.gQ.mouseTracker['x'];
+            playerPosX = $("#player").x();
 
 
-        //Update the position of the mouseMarker
-        mouseTrackerPosX = mousePosX;
-        if (mousePosX > 459) {
-            mouseTrackerPosX = 460;
-        }
-        $("#mouseMarker").x(mouseTrackerPosX);
-
-
-
-        //Update the movement of the player:
-        //if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81] || ( mousePosX<playerPosX && mousePosX<playerPosX-20 ) ){ //this is left! (<- or w or q or mouse on the left) reminder
-        if (mousePosX < playerPosX && mousePosX < playerPosX - 10) { //this is left! (<- or w or q or mouse on the left)
-            var nextpos = playerPosX - playerMove;
-            if (nextpos > 0) {
-                $("#player").x(nextpos);
+            //Update the position of the mouseMarker
+            mouseTrackerPosX = mousePosX;
+            if (mousePosX > 459) {
+                mouseTrackerPosX = 460;
             }
-        }
-        //if( $.gQ.keyTracker[39] ||  $.gQ.keyTracker[88] ||  $.gQ.keyTracker[68] || ( mousePosX>playerPosX && mousePosX>playerPosX+20 ) ){ //this is right! (-> or x or d or mouse on the right)
-        if (mousePosX > playerPosX && mousePosX > playerPosX + 10) { //this is right! (-> or x or d or mouse on the right)
-            var nextpos = playerPosX + playerMove;
-            if (nextpos < PLAYGROUND_WIDTH - 45) {
-                $("#player").x(nextpos);
-            }
-        }
-        //The player shoots:
-        //if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is k to shoot!  reminder
-        if ($.gQ.mouseTracker[1] && playerShootingOn) {
-            //shoot missile here
-            if (playerBullet_1_number < 10) {
-                playerBullet_1_number++;
-            } else {
-                playerBullet_1_number = 0;
-            }
-            var playerposx = $("#player").x();
-            var playerposy = $("#player").y();
-            var name = "playerMissle_" + playerBullet_1_number;
-            $("#playerMissileLayer").addSprite(name, {animation: missile["player"], posx: playerposx + 17, posy: playerposy, width: 6, height: 14});
-            $("#" + name).addClass("playerMissiles");
-            playerShootingOn = false;
-        }
-        //Update the movement of the enemies and make them fired
-        $(".enemy").each(function() {
-            this.enemy.update($("#player"));
-            var posx = $(this).x();
-            var posy = $(this).y();// Used for the tracker
-            if (this.enemy instanceof Bomber) {
+            $("#mouseMarker").x(mouseTrackerPosX);
 
-                if (posx < -60 || posx > 560) {
-                    $(this).remove();
-                    return;
-                }
 
+
+            //Update the movement of the player:
+            //if( $.gQ.keyTracker[37] ||  $.gQ.keyTracker[87] ||  $.gQ.keyTracker[81] || ( mousePosX<playerPosX && mousePosX<playerPosX-20 ) ){ //this is left! (<- or w or q or mouse on the left) reminder
+            if (mousePosX < playerPosX && mousePosX < playerPosX - 10) { //this is left! (<- or w or q or mouse on the left)
+                var nextpos = playerPosX - playerMove;
+                if (nextpos > 0) {
+                    $("#player").x(nextpos);
+                }
             }
-            if (this.enemy instanceof Tracker) {
-                if (posx < 0) {
-                    $("#tracker")[0].enemy.speedx = enemies2SpeedX;
-                    return;
+            //if( $.gQ.keyTracker[39] ||  $.gQ.keyTracker[88] ||  $.gQ.keyTracker[68] || ( mousePosX>playerPosX && mousePosX>playerPosX+20 ) ){ //this is right! (-> or x or d or mouse on the right)
+            if (mousePosX > playerPosX && mousePosX > playerPosX + 10) { //this is right! (-> or x or d or mouse on the right)
+                var nextpos = playerPosX + playerMove;
+                if (nextpos < PLAYGROUND_WIDTH - 45) {
+                    $("#player").x(nextpos);
                 }
-                if (posx > 460) {
-                    $("#tracker")[0].enemy.speedx = -enemies2SpeedX;
-                    return;
+            }
+            //The player shoots:
+            //if(( $.gQ.keyTracker[75] || $.gQ.mouseTracker[1]) && playerShootingOn ){ // this is k to shoot!  reminder
+            if ($.gQ.mouseTracker[1] && playerShootingOn) {
+                //shoot missile here
+                if (playerBullet_1_number < 10) {
+                    playerBullet_1_number++;
+                } else {
+                    playerBullet_1_number = 0;
                 }
-                if (posy > 550) {
-                    $(this).remove();
-                    heroDetectedByTracker = false;
-                    return;
-                }
+                var playerposx = $("#player").x();
+                var playerposy = $("#player").y();
+                var name = "playerMissle_" + playerBullet_1_number;
+                $("#playerMissileLayer").addSprite(name, {animation: missile["player"], posx: playerposx + 17, posy: playerposy, width: 6, height: 14});
+                $("#" + name).addClass("playerMissiles");
+                playerShootingOn = false;
+            }
+            //Update the movement of the enemies and make them fired
+            $(".enemy").each(function() {
+                this.enemy.update($("#player"));
+                var posx = $(this).x();
+                var posy = $(this).y();// Used for the tracker
+                if (this.enemy instanceof Bomber) {
 
-                // Random value use for going down and firing
-                xTrackerFactor = Math.random();
-                // Detect if the hero is near below
-                if (nextpos > posx - 60 && nextpos < posx + 140 && !heroDetectedByTracker) {
-                    xTrackerFactor = Math.random();
-                    if (xTrackerFactor < 0.05) {// Go down
-                        $("#tracker")[0].enemy.speedx = 0;
-                        $("#tracker")[0].enemy.speedy = 33;
-                        heroDetectedByTracker = true;
+                    if (posx < -60 || posx > 560) {
+                        $(this).remove();
                         return;
                     }
 
                 }
+                if (this.enemy instanceof Tracker) {
+                    if (posx < 0) {
+                        $("#tracker")[0].enemy.speedx = enemies2SpeedX;
+                        return;
+                    }
+                    if (posx > 460) {
+                        $("#tracker")[0].enemy.speedx = -enemies2SpeedX;
+                        return;
+                    }
+                    if (posy > 550) {
+                        $(this).remove();
+                        heroDetectedByTracker = false;
+                        return;
+                    }
 
-                //Test for collision with the tracker
-                var collidedTracker = $(this).collision("#player,." + $.gQ.groupCssClass);
-                if (collidedTracker.length > 0) {
+                    // Random value use for going down and firing
+                    xTrackerFactor = Math.random();
+                    // Detect if the hero is near below
+                    if (nextpos > posx - 60 && nextpos < posx + 140 && !heroDetectedByTracker) {
+                        xTrackerFactor = Math.random();
+                        if (xTrackerFactor < 0.05) {// Go down
+                            $("#tracker")[0].enemy.speedx = 0;
+                            $("#tracker")[0].enemy.speedy = 33;
+                            heroDetectedByTracker = true;
+                            return;
+                        }
 
+                    }
+
+                    //Test for collision with the tracker
+                    var collidedTracker = $(this).collision("#player,." + $.gQ.groupCssClass);
+                    if (collidedTracker.length > 0) {
+
+                        //The player has been hit!
+                        heroDetectedByTracker = false;
+                        collidedTracker.each(function() {
+
+                            $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerAnimationStateSwitch);
+                            playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
+                        });
+                        $(this).remove();
+                        gameOver = $("#player")[0].player.damage();
+                    }
+
+                }
+
+                if (this.enemy instanceof Boss) {
+                    if (posx < -60) {
+                        $("#boss_1")[0].enemy.speedx = enemies2SpeedX;
+                        return;
+                    }
+                    if (posx > 440) {
+                        $("#boss_1")[0].enemy.speedx = -enemies2SpeedX;
+                        return;
+                    }
+
+
+
+
+                }
+                //Make the enemies fire
+                if (this.enemy instanceof Bomber) {
+
+                    var enemyposx = $(this).x();
+                    var enemyposy = $(this).y();
+                    bomber_random_fire = Math.random();
+                    // Drops the bomb
+                    if (bomber_random_fire < 0.015) {
+                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                            enemiesMissileNumber++;
+                        } else {
+                            enemiesMissileNumber = 0;
+                        }
+                        var name = "enemiesBomb_1_" + enemiesMissileNumber;
+                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-bomb"], posx: enemyposx + 20, posy: enemyposy + 25, width: 20, height: 30});
+                        $("#" + name).addClass("enemiesMissiles").addClass("bomberBomb");
+                    }
+
+                    //Fires colored ray
+                    if (level > 1 && level <= 3 && $(this).hasClass("bomber_1")) {
+                        if (bomber_random_fire >= 0.020 && bomber_random_fire < 0.040) {
+                            if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                                enemiesMissileNumber++;
+                            } else {
+                                enemiesMissileNumber = 0;
+                            }
+                            var name = "enemyBomberGreenRay_1_" + enemiesMissileNumber;
+                            $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6, height: 17});
+                            $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
+
+                        } else if (bomber_random_fire >= 0.040 && bomber_random_fire < 0.060) {
+                            if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                                enemiesMissileNumber++;
+                            } else {
+                                enemiesMissileNumber = 0;
+                            }
+                            var name = "enemyBomberRedRay_1_" + enemiesMissileNumber;
+                            $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6, height: 17});
+                            $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
+                        }
+                    }
+                    if (level > 2 && level <= 3 && $(this).hasClass("bomber_2")) {
+                        if (bomber_random_fire >= 0.060 && bomber_random_fire < 0.080) {
+                            if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                                enemiesMissileNumber++;
+                            } else {
+                                enemiesMissileNumber = 0;
+                            }
+                            var name = "enemyBomberGreenRay_2_" + enemiesMissileNumber;
+                            $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6, height: 17});
+                            $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
+
+                        } else if (bomber_random_fire >= 0.080 && bomber_random_fire < 0.1) {
+                            if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                                enemiesMissileNumber++;
+                            } else {
+                                enemiesMissileNumber = 0;
+                            }
+                            var name = "enemyBomberRedRay_2_" + enemiesMissileNumber;
+                            $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6, height: 17});
+                            $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
+                        }
+                    }
+                }
+
+                if (this.enemy instanceof Tracker) {
+
+                    if (xTrackerFactor > 0.25 && trackerShootingOn) {// xTrackerFactor come from the movement of the tracker 
+                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                            enemiesMissileNumber++;
+                        } else {
+                            enemiesMissileNumber = 0;
+                        }
+                        var name = "trackerRay_1-" + enemiesMissileNumber;
+                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["tracker-ray"], posx: posx + 4, posy: posy + 36, width: 2, height: 17});
+                        $("#" + name).addClass("enemiesMissiles").addClass("trackerRay");
+                        var name = "trackerRay_2-" + enemiesMissileNumber;
+                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["tracker-ray"], posx: posx + 36, posy: posy + 36, width: 2, height: 17});
+                        $("#" + name).addClass("enemiesMissiles").addClass("trackerRay");
+                        trackerShootingOn = false;
+                    }
+                }
+
+                if (this.enemy instanceof Boss) {
+
+                    if (Math.random() < 0.066) {
+                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
+                            enemiesMissileNumber++;
+                        } else {
+                            enemiesMissileNumber = 0;
+                        }
+                        var name = "boss_1_LargeRay_1-" + enemiesMissileNumber;
+                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["boss-1-large-ray"], posx: posx + 4, posy: posy + 22, width: 104, height: 10});
+                        $("#" + name).addClass("enemiesMissiles").addClass("boss_1_LargeRay_1");
+                    }
+                }
+
+            });
+            //Update the movement of the missiles
+            $(".playerMissiles").each(function() {
+                var posy = $(this).y();
+                if (posy < 0) {
+                    $(this).remove();
+                    return;
+                }
+
+                $(this).y(MISSILE_PLAYER_SPEED, true);
+
+                //Test for collisions with enemies
+                var collided = $(this).collision(".enemy,." + $.gQ.groupCssClass);
+
+                if (collided.length > 0) {
+
+                    //An enemy has been hit!
+                    collided.each(function() {
+
+                        if (this.enemy instanceof Bomber) {
+
+                            $(this).setAnimation(enemies[0]["explode"], function(node) {
+                                $(node).remove();
+                            });
+                            score = score + 30;
+                            $(this).removeClass("enemy");
+
+
+
+                        } else if (this.enemy instanceof Tracker) {
+
+                            $(this).setAnimation(enemies[1]["explode"], function(node) {
+                                $(node).remove();
+                                heroDetectedByTracker = false;
+                            });
+                            score = score + 50;
+                            $(this).removeClass("enemy");
+
+                        } else if (this.enemy instanceof Boss) {
+
+                            $("#boss_1")[0].enemy.damage();
+                            shieldBoss = $("#boss_1")[0].enemy.shield;
+                            switch (shieldBoss) {
+                                case 3:
+                                    $(this).setAnimation(enemies[2]["damaged-1"]);
+                                    score = score + 100;
+                                    break;
+                                case 2:
+                                    $(this).setAnimation(enemies[2]["damaged-2"]);
+                                    score = score + 120;
+                                    break;
+                                case 1:
+                                    $(this).setAnimation(enemies[2]["damaged-3"]);
+                                    score = score + 150;
+                                    break;
+                                case 0:
+                                    $(this).setAnimation(enemies[2]["explode"], function(node) {
+                                        $(node).remove();
+                                    });
+                                    score = score + 190;
+                                    alert('You Win !!!');
+                                    break;
+                            }
+
+                        }
+
+
+                    });
+
+                    // Delete the player missile
+                    $(this).removeClass("playerMissiles").remove();
+
+                }
+
+                //Test for collisions with enemies's missiles
+                var collidedMissile = $(this).collision(".enemiesMissiles,." + $.gQ.groupCssClass);
+
+                if (collidedMissile.length > 0) {
+
+                    //An enemy missile has been hit!
+                    collidedMissile.each(function() {
+
+                        // Scoring
+                        if ($(this).hasClass("bomberBomb")) {
+
+                            $(this).setAnimation(missile["bomber-bomb-explode"], function(node) {
+                                score = score + 7;
+                                $(node).remove();
+                            });
+
+                        } else if ($(this).hasClass("bomberRay")) {
+
+                            score = score + 12;
+
+                        } else if ($(this).hasClass("trackerRay")) {
+
+                            score = score + 23;
+
+                        }
+
+                        // Delete the enemy missile from the screen if is not a ray from the boss
+                        if (!$(this).hasClass("boss_1_LargeRay_1")) {
+
+                            $(this).remove();
+                            $(this).removeClass("enemiesMissiles");
+
+                        }
+
+                    });
+
+                    $(this).removeClass("playerMissiles").remove();
+
+                }
+
+
+            });
+
+
+
+            $(".enemiesMissiles").each(function() {
+                var posy = $(this).y();
+                if (posy > 500) {
+                    $(this).remove();
+                    return;
+                }
+                if ($(this).hasClass("trackerRay") || $(this).hasClass("bomberRay") || $(this).hasClass("boss_1_LargeRay_1")) {// Rays
+                    $(this).y(TRACKER_RAY_SPEED, true);
+                } else {// Bombs
+                    $(this).y(BOMB_1_SPEED, true);
+                }
+                //Test for collisions
+                var collided = $(this).collision("#player,." + $.gQ.groupCssClass);
+                if (collided.length > 0) {
                     //The player has been hit!
-
-                    heroDetectedByTracker = false;
-
-                    collidedTracker.each(function() {
-
+                    collided.each(function() {
                         $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerAnimationStateSwitch);
                         playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
                     });
-
                     $(this).remove();
+                    gameOver = $("#player")[0].player.damage();
 
-                    if (playerAnimationState === 6) {
-                        alert('gameover');
-                    }
                 }
-
-
-
-
+            });
+            if (timeSeconds >= 60) {
+                gameOver = true;
             }
 
-            if (this.enemy instanceof Boss) {
-                if (posx < -60) {
-                    $("#boss_1")[0].enemy.speedx = enemies2SpeedX;
-                    return;
-                }
-                if (posx > 440) {
-                    $("#boss_1")[0].enemy.speedx = -enemies2SpeedX;
-                    return;
-                }
+            $("#gameInformations").html('COUNTDOWN : ' + remainingTime + ' / LEVEL : ' + level);
+            $("#playerInformations").html('SHIELD : ' + $("#player")[0].player.shield + ' / SCORE : ' + score);
+            
+            $("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
 
-
-
-
-            }
-            //Make the enemies fire
-            if (this.enemy instanceof Bomber) {
-
-                var enemyposx = $(this).x();
-                var enemyposy = $(this).y();
-                bomber_random_fire = Math.random();
-                // Drops the bomb
-                if (bomber_random_fire < 0.015) {
-                    if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                        enemiesMissileNumber++;
-                    } else {
-                        enemiesMissileNumber = 0;
-                    }
-                    var name = "enemiesBomb_1_" + enemiesMissileNumber;
-                    $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-bomb"], posx: enemyposx + 20, posy: enemyposy + 25, width: 20, height: 30});
-                    $("#" + name).addClass("enemiesMissiles").addClass("bomberBomb");
-                }
-
-                //Fires colored ray
-                if (level > 1 && level <= 3 && $(this).hasClass("bomber_1")) {
-                    if (bomber_random_fire >= 0.020 && bomber_random_fire < 0.040) {
-                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                            enemiesMissileNumber++;
-                        } else {
-                            enemiesMissileNumber = 0;
-                        }
-                        var name = "enemyBomberGreenRay_1_" + enemiesMissileNumber;
-                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6, height: 17});
-                        $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
-
-                    } else if (bomber_random_fire >= 0.040 && bomber_random_fire < 0.060) {
-                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                            enemiesMissileNumber++;
-                        } else {
-                            enemiesMissileNumber = 0;
-                        }
-                        var name = "enemyBomberRedRay_1_" + enemiesMissileNumber;
-                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6, height: 17});
-                        $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
-                    }
-                }
-                if (level > 2 && level <= 3 && $(this).hasClass("bomber_2")) {
-                    if (bomber_random_fire >= 0.060 && bomber_random_fire < 0.080) {
-                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                            enemiesMissileNumber++;
-                        } else {
-                            enemiesMissileNumber = 0;
-                        }
-                        var name = "enemyBomberGreenRay_2_" + enemiesMissileNumber;
-                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-green-ray"], posx: enemyposx + 1, posy: enemyposy + 25, width: 6, height: 17});
-                        $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
-
-                    } else if (bomber_random_fire >= 0.080 && bomber_random_fire < 0.1) {
-                        if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                            enemiesMissileNumber++;
-                        } else {
-                            enemiesMissileNumber = 0;
-                        }
-                        var name = "enemyBomberRedRay_2_" + enemiesMissileNumber;
-                        $("#enemiesMissileLayer").addSprite(name, {animation: missile["bomber-red-ray"], posx: enemyposx + 53, posy: enemyposy + 25, width: 6, height: 17});
-                        $("#" + name).addClass("enemiesMissiles").addClass("bomberRay");
-                    }
-                }
-            }
-
-            if (this.enemy instanceof Tracker) {
-
-                if (xTrackerFactor > 0.25 && trackerShootingOn) {// xTrackerFactor come from the movement of the tracker 
-                    if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                        enemiesMissileNumber++;
-                    } else {
-                        enemiesMissileNumber = 0;
-                    }
-                    var name = "trackerRay_1-" + enemiesMissileNumber;
-                    $("#enemiesMissileLayer").addSprite(name, {animation: missile["tracker-ray"], posx: posx + 4, posy: posy + 36, width: 2, height: 17});
-                    $("#" + name).addClass("enemiesMissiles").addClass("trackerRay");
-                    var name = "trackerRay_2-" + enemiesMissileNumber;
-                    $("#enemiesMissileLayer").addSprite(name, {animation: missile["tracker-ray"], posx: posx + 36, posy: posy + 36, width: 2, height: 17});
-                    $("#" + name).addClass("enemiesMissiles").addClass("trackerRay");
-                    trackerShootingOn = false;
-                }
-            }
-
-            if (this.enemy instanceof Boss) {
-
-                if (Math.random() < 0.066) {
-                    if (enemiesMissileNumber < ENEMIES_MISSILE_NUMBER_MAX) {
-                        enemiesMissileNumber++;
-                    } else {
-                        enemiesMissileNumber = 0;
-                    }
-                    var name = "boss_1_LargeRay_1-" + enemiesMissileNumber;
-                    $("#enemiesMissileLayer").addSprite(name, {animation: missile["boss-1-large-ray"], posx: posx + 4, posy: posy + 22, width: 104, height: 10});
-                    $("#" + name).addClass("enemiesMissiles").addClass("boss_1_LargeRay_1");
-                }
-            }
-
-        });
-        //Update the movement of the missiles
-        $(".playerMissiles").each(function() {
-            var posy = $(this).y();
-            if (posy < 0) {
-                $(this).remove();
-                return;
-            }
-
-            $(this).y(MISSILE_PLAYER_SPEED, true);
-
-            //Test for collisions with enemies
-            var collided = $(this).collision(".enemy,." + $.gQ.groupCssClass);
-
-            if (collided.length > 0) {
-
-                //An enemy has been hit!
-                collided.each(function() {
-
-                    if (this.enemy instanceof Bomber) {
-
-                        $(this).setAnimation(enemies[0]["explode"], function(node) {
-                            $(node).remove();
-                        });
-                        score = score + 30;
-                        $(this).removeClass("enemy");
-
-
-
-                    } else if (this.enemy instanceof Tracker) {
-
-                        $(this).setAnimation(enemies[1]["explode"], function(node) {
-                            $(node).remove();
-                            heroDetectedByTracker = false;
-                        });                        
-                        score = score + 50;
-                        $(this).removeClass("enemy");
-
-                    } else if (this.enemy instanceof Boss) {
-                        
-                        $("#boss_1")[0].enemy.damage();
-                        shieldBoss = $("#boss_1")[0].enemy.shield;
-                        switch (shieldBoss) {
-                            case 3:
-                                $(this).setAnimation(enemies[2]["damaged-1"]);
-                                score = score + 100;
-                                break;
-                            case 2:
-                                $(this).setAnimation(enemies[2]["damaged-2"]);
-                                score = score + 120;
-                                break;
-                            case 1:
-                                $(this).setAnimation(enemies[2]["damaged-3"]);
-                                score = score + 150;
-                                break;
-                            case 0:
-                                $(this).setAnimation(enemies[2]["explode"], function(node) {
-                                    $(node).remove();
-                                });
-                                score = score + 190;
-                                alert('You Win !!!');
-                                break;
-                        }
-
-                    }
-
-
-                });
-
-                // Delete the player missile
-                $(this).removeClass("playerMissiles").remove();
-
-            }
-
-            //Test for collisions with enemies's missiles
-            var collidedMissile = $(this).collision(".enemiesMissiles,." + $.gQ.groupCssClass);
-
-            if (collidedMissile.length > 0) {
-
-                //An enemy missile has been hit!
-                collidedMissile.each(function() {
-
-                    // Scoring
-                    if ($(this).hasClass("bomberBomb")) {
-                        
-                        $(this).setAnimation(missile["bomber-bomb-explode"], function(node) {
-                            score = score + 7;
-                            $(node).remove();
-                        });
-                        
-                    } else if ($(this).hasClass("bomberRay")) {
-                        
-                        score = score + 12;
-                        
-                    } else if ($(this).hasClass("trackerRay")) {
-                        
-                        score = score + 23;
-                        
-                    }
-
-                    // Delete the enemy missile from the screen if is not a ray from the boss
-                    if (!$(this).hasClass("boss_1_LargeRay_1")) {
-                        $(this).remove();
-                        $(this).removeClass("enemiesMissiles");
-                    }
-
-
-
-
-                });
-
-                $(this).removeClass("playerMissiles").remove();
-
-            }
-
-
-        });
-
-
-
-        $(".enemiesMissiles").each(function() {
-            var posy = $(this).y();
-            if (posy > 500) {
-                $(this).remove();
-                return;
-            }
-            if ($(this).hasClass("trackerRay") || $(this).hasClass("bomberRay") || $(this).hasClass("boss_1_LargeRay_1")) {// Rays
-                $(this).y(TRACKER_RAY_SPEED, true);
-            } else {// Bombs
-                $(this).y(BOMB_1_SPEED, true);
-            }
-            //Test for collisions
-            var collided = $(this).collision("#player,." + $.gQ.groupCssClass);
-            if (collided.length > 0) {
-                //The player has been hit!
-                collided.each(function() {
-                    $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerAnimationStateSwitch);
-                    playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
-                });
-                $(this).remove();
-                if (playerAnimationState === 6) {
-                    alert('Game Over');
-                }
-            }
-        });
-        if (timeSeconds >= 60 && timeSeconds < 61) {
-            alert('Time Over');
-        }
-        $("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
+        }// End !gameOver
 
     }, REFRESH_RATE);
 
     //This function manage the creation of the enemies // And the shooting of the player
     $.playground().registerCallback(function() {
+
         if (!gameOver) {
 
             // Bomber 1
             if (!$(".bomber_1").length && Math.random() > 0.40 && level <= 3) {
+
                 var name = "bomber_1";
                 // Appears on the right or on the left ?
                 if (Math.random() > 0.5) {//Right
@@ -589,10 +603,12 @@ $(function() {
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Bomber($("#" + name));
                 $("#" + name)[0].enemy.speedx = bomber_1_speedx;
+
             }
 
             // Bomber 2
             if (!$(".bomber_2").length && Math.random() > 0.60 && level >= 2 && level <= 3) {
+
                 var name = "bomber_2";
                 // Appears on the right or on the left ?
                 if (Math.random() > 0.5) {//Right
@@ -606,10 +622,12 @@ $(function() {
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Bomber($("#" + name));
                 $("#" + name)[0].enemy.speedx = bomber_2_speedx;
+
             }
 
             // Tracker
             if (!$(".tracker").length && Math.random() > 0.75 && level >= 3) {
+
                 var name = "tracker";
                 // Appears on the right or on the left ?
                 if (Math.random() > 0.5) {//Right
@@ -623,15 +641,18 @@ $(function() {
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Tracker($("#" + name));
                 $("#" + name)[0].enemy.speedx = tracker_speedx;
+
             }
+
             // THE BOSS
             if (!$(".boss_1").length && !$(".bomber_1").length && !$(".bomber_2").length && Math.random() > 0.69 && level >= 4) {
+
                 var name = "boss_1";
                 // Appears on the right or on the left ?
-                if (Math.random() > 0.5) {//Right
+                if (Math.random() > 0.5) {//Right                 
                     boss_posx = 620;
                     boss_speedx = -enemies2SpeedX;
-                } else {//Left
+                } else {//Left                    
                     boss_posx = -120;
                     boss_speedx = enemies2SpeedX;
                 }
@@ -639,16 +660,21 @@ $(function() {
                 $("#" + name).addClass("enemy").addClass(name);
                 $("#" + name)[0].enemy = new Boss($("#" + name));
                 $("#" + name)[0].enemy.speedx = boss_speedx;
+
             }
 
 
-            // Shoting of the tracker
-            if (!trackerShootingOn) {// For the shooting of the player
+            // Shooting of the tracker
+            if (!trackerShootingOn) {// For the shooting of the tracker
+
                 trackerShootingOn = true;
+
             }
             // Shotting of the player
             if (!playerShootingOn) {// For the shooting of the player
+
                 playerShootingOn = true;
+
             }
 
 
@@ -674,6 +700,7 @@ $(function() {
                 timeSeconds = '0' + timeSeconds;
             }
             $("#timeSeconds").html(timeSeconds);
+            remainingTime = 60 - timeSeconds;
 
         }
 
