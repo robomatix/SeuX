@@ -150,23 +150,22 @@ $(function() {
     // 1st kind of enemy:
     enemies[0] = new Array(2); // enemies have two animations
     enemies[0]["idle"] = new $.gQ.Animation({imageURL: "images/ennemy-bomber-1.png"});
-    enemies[0]["explode"] = new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[0]["explode"] = new $.gQ.Animation({imageURL: "images/ennemy-bomber-1-explode.png", numberOfFrame: 4, delta: 40, rate: 100, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
     enemies[1] = new Array(); // enemies have two animations
     enemies[1]["idle"] = new $.gQ.Animation({imageURL: "images/ennemy-tracker.png"});
-    enemies[1]["explode"] = new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[1]["explode"] = new $.gQ.Animation({imageURL: "images/ennemy-tracker-1-explode.png", numberOfFrame: 4, delta: 36, rate: 100, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
     // Boss
     enemies[2] = new Array(2); // enemies have two animations
     enemies[2]["idle"] = new $.gQ.Animation({imageURL: "images/boss-1.png"});
-    enemies[2]["damaged-1"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 2, delta: 90, rate: 120, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["damaged-2"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 3, delta: 90, rate: 120, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["damaged-3"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 4, delta: 90, rate: 120, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["explode"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 5, delta: 90, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[2]["damaged-1"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 2, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[2]["damaged-2"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 3, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[2]["damaged-3"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 4, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[2]["explode"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 5, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
 
-    // Weapon missile:
+    // Weapon missile:    
     missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
-    //missile["bomber-bomb"] = new Array(); // bomber's bomb have two animations
     missile["bomber-bomb"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1.png"});
-    missile["bomber-bomb-explode"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 60, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    missile["bomber-bomb-explode"] = new $.gQ.Animation({imageURL: "images/ennemy-bomb-1-explode.png", numberOfFrame: 4, delta: 30, rate: 120, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
     missile["bomber-green-ray"] = new $.gQ.Animation({imageURL: "images/bomber-green-ray.png"});
     missile["bomber-red-ray"] = new $.gQ.Animation({imageURL: "images/bomber-red-ray.png"});
     missile["tracker-ray"] = new $.gQ.Animation({imageURL: "images/tracker-ray.png"});
@@ -182,12 +181,12 @@ $(function() {
             .end()
             .addGroup("enemiesActors", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
             .end()
-
             .addGroup("heroActor", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
             .addSprite("player", {animation: playerAnimation["idle"], posx: (PLAYGROUND_WIDTH / 2) - 20, posy: 455, width: 40, height: 40})
             .addSprite("mouseMarker", {animation: mouseMarker["idle"], posx: (PLAYGROUND_WIDTH / 2) - 20, posy: 498, width: 40, height: 2})
             .end()
             .addGroup("playerMissileLayer", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+            .end()
             .addGroup("overlay", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
 
     $("#player")[0].player = new Player($("#player"));
@@ -529,8 +528,8 @@ $(function() {
                         }
 
                         // Delete the enemy missile from the screen if is not a ray from the boss
-                        if (!$(this).hasClass("boss_1_LargeRay_1")) {
-
+                        if (!$(this).hasClass("boss_1_LargeRay_1") && !$(this).hasClass("bomberBomb")) {
+                            
                             $(this).remove();
                             $(this).removeClass("enemiesMissiles");
 
