@@ -28,66 +28,66 @@
 -->
 
 <html>
-<head>
-	
-<title>seuX</title>
+    <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>seuX</title>
 
-<meta name="description" content="seux : Le shoot'em up de la mort qui tue" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!--[if lt IE 9]>
-<script src="js/html5shiv.js"></script>
-<![endif]-->
-<link href="css/style.css" rel="stylesheet">
-<script src="js/jquery.js"></script>
-<script src="js/jquery.gamequery-0.7.1.js"></script>
-<script src="js/seux.js"></script>
-		<style type="text/css">
-			
-			@import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
+        <meta name="description" content="seux : Le shoot'em up de la mort qui tue" />
 
-			body { font-size:16px; font-family:"Open Sans",Arial,Helvetica,Sans-serif; }
+        <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <![endif]-->
+        <link href="css/style.css" rel="stylesheet">
+        <script src="js/jquery.js"></script>
+        <script src="js/jquery.gamequery-0.7.1.js"></script>
+        <script src="js/seux.js"></script>
+        <style type="text/css">
 
-			#game { width:500px; margin:20 auto; position:relative; }
-			
-			#gameInfos { position:absolute; top:520px; width:460px; padding:20px;
-				background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
+            @import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
 
-			#console { position:absolute; top:560px; width:460px; padding:20px;
-				background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
-			
-			
-		</style>
-<meta name="robots" content="noindex, nofollow">
+            body { font-size:16px; font-family:"Open Sans",Arial,Helvetica,Sans-serif; }
 
-<script>
-        $(document).ready(function(){
-            // Disable the selection on the page -> http://stackoverflow.com/questions/2700000/how-to-disable-text-selection-using-jquery
-			$("body").css("-webkit-user-select","none");
-            $("body").css("-moz-user-select","none");
-            $("body").css("-ms-user-select","none");
-            $("body").css("-o-user-select","none");
-            $("body").css("user-select","none");
-        });
-</script>
+            #game { width:500px; margin:20 auto; position:relative; }
 
-</head>
-<body>
+            #gameInfos { position:absolute; top:520px; width:460px; padding:20px;
+                         background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
 
-<section id="game">
-	<div id="playground" style="width: 500px; height: 500px; background: black;">
-		<div id="welcomeScreen" style="width: 500px; height: 250px; position: absolute; z-index: 100; background-image: url(logo.png); font-family: verdana, sans-serif;">
-			<div style="position: absolute; top: 120px; width: 700px; color: white;">
-				<center><a style="cursor: pointer;" id="startbutton">Click here to start!</a></center>
-			</div>
-		</div><!-- #welcomeScreen -->
-	</div><!-- #playground -->
-	<div id="gameInfos">Time : <span id="timeSeconds">0</span> / Level : <span id="level">1</span></div>
-	<div id="console">Pouet</div>
-</section><!-- #game-->
+            #console { position:absolute; top:560px; width:460px; padding:20px;
+                       background:#eee; border:1px solid #ccc; margin:10px auto 0 auto; overflow:auto; }
 
-</body>
+
+        </style>
+        <meta name="robots" content="noindex, nofollow">
+
+        <script>
+            $(document).ready(function() {
+                // Disable the selection on the page -> http://stackoverflow.com/questions/2700000/how-to-disable-text-selection-using-jquery
+                $("body").css("-webkit-user-select", "none");
+                $("body").css("-moz-user-select", "none");
+                $("body").css("-ms-user-select", "none");
+                $("body").css("-o-user-select", "none");
+                $("body").css("user-select", "none");
+            });
+        </script>
+
+    </head>
+    <body>
+
+        <section id="game">
+            <div id="playground" style="width: 500px; height: 500px; background: black;">
+                <div id="welcomeScreen" style="width: 500px; height: 250px; position: absolute; z-index: 100; background-image: url(logo.png); font-family: verdana, sans-serif;">
+                    <div style="position: absolute; top: 120px; width: 700px; color: white;">
+                        <center><a style="cursor: pointer;" id="startbutton">Click here to start!</a></center>
+                    </div>
+                </div><!-- #welcomeScreen -->
+            </div><!-- #playground -->
+            <div id="gameInfos">Time : <span id="timeSeconds">0</span> / Level : <span id="level">1</span></div>
+            <div id="console">Pouet</div>
+        </section><!-- #game-->
+
+    </body>
 </html>
 
