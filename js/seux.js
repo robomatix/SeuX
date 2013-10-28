@@ -29,6 +29,7 @@ var playerShootingOn = true;
 var trackerShootingOn = false;
 var enemiesMissileNumber = 0;
 var playerBullet_1_number = 0;
+var remainingTime = 60;
 var timeSeconds = 0;
 var level = 1;
 
@@ -42,21 +43,21 @@ function restartgame() {
 ;
 
 // Apparence of the hero according to his state
-function playerAnimationStateSwitch() {
-    switch (playerAnimationState) {
-        case 1:
+function playerShieldStateSwitch() {
+    switch ($("#player")[0].player.shield) {
+        case 4:
             $("#player").setAnimation(playerAnimation["damaged-1"]);
             break;
-        case 2:
+        case 3:
             $("#player").setAnimation(playerAnimation["damaged-2"]);
             break;
-        case 3:
+        case 2:
             $("#player").setAnimation(playerAnimation["damaged-3"]);
             break;
-        case 4:
+        case 1:
             $("#player").setAnimation(playerAnimation["damaged-4"]);
             break;
-        case 5:
+        case 0:
             $("#player").setAnimation(playerAnimation["damaged-5"]);
             break;
     }
@@ -306,8 +307,7 @@ $(function() {
                         heroDetectedByTracker = false;
                         collidedTracker.each(function() {
 
-                            $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerAnimationStateSwitch);
-                            playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
+                            $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerShieldStateSwitch);
                         });
                         $(this).remove();
                         gameOver = $("#player")[0].player.damage();
@@ -561,8 +561,7 @@ $(function() {
                 if (collided.length > 0) {
                     //The player has been hit!
                     collided.each(function() {
-                        $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerAnimationStateSwitch);
-                        playerAnimationState++;// See the callback fonction that managed the look of the player : playerAnimationStateSwitch 
+                        $("#player").setAnimation(playerAnimation["hitted-1"], callback = playerShieldStateSwitch);
                     });
                     $(this).remove();
                     gameOver = $("#player")[0].player.damage();
