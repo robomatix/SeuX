@@ -442,9 +442,7 @@ $(function() {
                         $(this).setAnimation(enemies[0]["explode"], function(node) {
                             $(node).remove();
                         });
-                        score = score + 10;
-                        //bomberId = $(this).attr('id'); Is it necessary ?
-                        //bomberId2false(bomberId); Is it necessary ?
+                        score = score + 30;
                         $(this).removeClass("enemy");
 
 
@@ -454,33 +452,32 @@ $(function() {
                         $(this).setAnimation(enemies[1]["explode"], function(node) {
                             $(node).remove();
                             heroDetectedByTracker = false;
-                        });
-                        score = score + 20;
-
+                        });                        
+                        score = score + 50;
                         $(this).removeClass("enemy");
 
                     } else if (this.enemy instanceof Boss) {
+                        
                         $("#boss_1")[0].enemy.damage();
                         shieldBoss = $("#boss_1")[0].enemy.shield;
-
                         switch (shieldBoss) {
                             case 3:
                                 $(this).setAnimation(enemies[2]["damaged-1"]);
-                                score = score + 10;
+                                score = score + 100;
                                 break;
                             case 2:
                                 $(this).setAnimation(enemies[2]["damaged-2"]);
-                                score = score + 20;
+                                score = score + 120;
                                 break;
                             case 1:
                                 $(this).setAnimation(enemies[2]["damaged-3"]);
-                                score = score + 30;
+                                score = score + 150;
                                 break;
                             case 0:
                                 $(this).setAnimation(enemies[2]["explode"], function(node) {
                                     $(node).remove();
                                 });
-                                score = score + 40;
+                                score = score + 190;
                                 alert('You Win !!!');
                                 break;
                         }
@@ -490,6 +487,7 @@ $(function() {
 
                 });
 
+                // Delete the player missile
                 $(this).removeClass("playerMissiles").remove();
 
             }
@@ -502,18 +500,31 @@ $(function() {
                 //An enemy missile has been hit!
                 collidedMissile.each(function() {
 
+                    // Scoring
                     if ($(this).hasClass("bomberBomb")) {
+                        
                         $(this).setAnimation(missile["bomber-bomb-explode"], function(node) {
+                            score = score + 7;
                             $(node).remove();
                         });
+                        
+                    } else if ($(this).hasClass("bomberRay")) {
+                        
+                        score = score + 12;
+                        
+                    } else if ($(this).hasClass("trackerRay")) {
+                        
+                        score = score + 23;
+                        
                     }
 
+                    // Delete the enemy missile from the screen if is not a ray from the boss
                     if (!$(this).hasClass("boss_1_LargeRay_1")) {
                         $(this).remove();
                         $(this).removeClass("enemiesMissiles");
                     }
 
-                    score = score + 7;
+
 
 
                 });
