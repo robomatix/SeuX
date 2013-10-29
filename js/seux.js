@@ -191,7 +191,7 @@ $(function() {
 
     $("#player")[0].player = new Player($("#player"));
 
-    //this is the HUD for the player life and shield
+    //this is for displaying informations about the game and the player 
     $("#overlay").append("<div id='gameInformations'style='color: white; width: 50%; position: absolute; left: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div><div id='playerInformations'style='color: white; width: 50%; position: absolute; right: 0; font-family: verdana, sans-serif; text-align: center; font-size: 0.67em;'></div>");
     $("#overlay").append("<div id='gameDialog'style='color: white; width: 100%; position: absolute; top: 250px; font-family: verdana, sans-serif; text-align: center; font-size: 3em;'></div>");
 
@@ -529,7 +529,7 @@ $(function() {
 
                         // Delete the enemy missile from the screen if is not a ray from the boss
                         if (!$(this).hasClass("boss_1_LargeRay_1") && !$(this).hasClass("bomberBomb")) {
-                            
+
                             $(this).remove();
                             $(this).removeClass("enemiesMissiles");
 
@@ -579,6 +579,46 @@ $(function() {
             $("#console").html('Game Started / SCORE : ' + score + ' ' + heroDetectedByTracker + 'width : ' + $('body,html').width() + ' mousePosX : ' + mousePosX + ' mouseTracker x' + $.gQ.mouseTracker['x']);
 
         }// End !gameOver
+
+        if (gameOver) {
+
+            gameDialog = "GAME OVER";
+            
+            switch (level) {
+                case 1:
+                    gameDialogGameOver = "You shit !";
+                    break;
+                case 2:
+                    gameDialogGameOver = "You can do better !";
+                    break;
+                case 3:
+                    gameDialogGameOver = "Not too bad !";
+                    break;
+                case 4:
+                    shieldBoss = $("#boss_1")[0].enemy.shield;
+                    if (timeSeconds <= 60 && shieldBoss === 0) {
+                        gameDialog = "YOU WIN !!!";
+                        gameDialogGameOver = "YOU DESTROYED THE BOSS !!!";
+                    } else if (timeSeconds <= 60 && shieldBoss > 0) {
+                        gameDialog = "TIME OVER";
+                        gameDialogGameOver = "YOU KNOW WHO IS THE BOSS !!!";
+                    } else {
+                        gameDialogGameOver = "YOU'VE SEEN THE BOSS...";
+                    }
+                    break;
+            }
+            
+            // Displaying the information when the game is over
+            $("#gameDialog").html(gameDialog).fadeTo(500, 1);
+            $("#overlay").append("<div id='gameDialogGameOver'style='color: white; width: 100%; position: absolute; top: 300px; font-family: verdana, sans-serif; text-align: center; font-size: 3em;'></div>");
+            $("#gameDialogGameOver").fadeTo(1000, 0).html(gameDialogGameOver).fadeTo(1000, 1);// A smart way to delay the apparition of the gameDialogGameOver message while setting the opacity to 0 before fade in to 1 !
+
+
+
+
+
+
+        }
 
     }, REFRESH_RATE);
 
