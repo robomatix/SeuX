@@ -742,7 +742,9 @@ $(function() {
             }
             $("#timeSeconds").html(timeSeconds);
             remainingTime = 60 - timeSeconds;
-
+            if (remainingTime < 10) {
+                remainingTime = '0' + remainingTime;
+            }
         }
 
     }, 1000); //once per 1 second
