@@ -583,7 +583,7 @@ $(function() {
         if (gameOver) {
 
             gameDialog = "GAME OVER";
-            
+
             switch (level) {
                 case 1:
                     gameDialogGameOver = "You shit !";
@@ -596,18 +596,19 @@ $(function() {
                     break;
                 case 4:
                     shieldBoss = $("#boss_1")[0].enemy.shield;
-                    if (timeSeconds <= 60 && shieldBoss === 0) {
+                    shieldPlayer = $("#player")[0].player.shield;
+                    if (timeSeconds <= 60 && shieldBoss === 0 && shieldPlayer > 0) {
                         gameDialog = "YOU WIN !!!";
                         gameDialogGameOver = "YOU DESTROYED THE BOSS !!!";
-                    } else if (timeSeconds <= 60 && shieldBoss > 0) {
+                    } else if (timeSeconds <= 60 && shieldBoss > 0 && shieldPlayer > 0) {
                         gameDialog = "TIME OVER";
-                        gameDialogGameOver = "YOU KNOW WHO IS THE BOSS !!!";
-                    } else {
                         gameDialogGameOver = "YOU'VE SEEN THE BOSS...";
+                    } else {
+                        gameDialogGameOver = "YOU KNOW WHO IS THE BOSS !!!";
                     }
                     break;
             }
-            
+
             // Displaying the information when the game is over
             $("#gameDialog").html(gameDialog).fadeTo(500, 1);
             $("#overlay").append("<div id='gameDialogGameOver'style='color: white; width: 100%; position: absolute; top: 300px; font-family: verdana, sans-serif; text-align: center; font-size: 3em;'></div>");
