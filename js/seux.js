@@ -99,15 +99,14 @@ function Enemy(node) {
 
 
     // updates the position of the enemy
-    this.update = function(playerNode) {
-        this.updateX(playerNode);
-        this.updateY(playerNode);
+    this.update = function(enemyNode) {
+        this.updateX(enemyNode);
+        this.updateY(enemyNode);
     };
-    this.updateX = function(playerNode) {
+    this.updateX = function(enemyNode) {
         this.node.x(this.speedx, true);
     };
-    this.updateY = function(playerNode) {
-        var newpos = parseInt(this.node.css("top")) + this.speedy;
+    this.updateY = function(enemyNode) {
         this.node.y(this.speedy, true);
     };
 }
@@ -157,10 +156,10 @@ $(function() {
     // Boss
     enemies[2] = new Array(2); // enemies have two animations
     enemies[2]["idle"] = new $.gQ.Animation({imageURL: "images/boss-1.png"});
-    enemies[2]["damaged-1"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 2, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["damaged-2"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 3, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["damaged-3"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 4, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
-    enemies[2]["explode"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 5, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL | $.gQ.ANIMATION_CALLBACK});
+    enemies[2]["damaged-1"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 2, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL});
+    enemies[2]["damaged-2"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 3, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL});
+    enemies[2]["damaged-3"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 4, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL});
+    enemies[2]["explode"] = new $.gQ.Animation({imageURL: "images/boss-1-explode.png", numberOfFrame: 5, delta: 90, rate: 250, type: $.gQ.ANIMATION_VERTICAL});
 
     // Weapon missile:    
     missile["player"] = new $.gQ.Animation({imageURL: "images/bullet-hero-1.png"});
@@ -483,9 +482,7 @@ $(function() {
                                     score = score + 150;
                                     break;
                                 case 0:
-                                    $(this).setAnimation(enemies[2]["explode"], function(node) {
-                                        $(node).remove();
-                                    });
+                                    $(this).setAnimation(enemies[2]["explode"]);
                                     score = score + 190;
                                     gameOver = true;
                                     break;
