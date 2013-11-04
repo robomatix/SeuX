@@ -566,7 +566,7 @@ $(function() {
 
                 }
             });
-            if (timeSeconds >= 60) {
+            if (timeSeconds === 60) {
                 gameOver = true;
             }
 
@@ -594,10 +594,10 @@ $(function() {
                 case 4:
                     shieldBoss = $("#boss_1")[0].enemy.shield;
                     shieldPlayer = $("#player")[0].player.shield;
-                    if (timeSeconds <= 60 && shieldBoss === 0 && shieldPlayer > 0) {
+                    if (timeSeconds < 60 && shieldBoss === 0 && shieldPlayer > 0) {
                         gameDialog = "YOU WIN !!!";
-                        gameDialogGameOver = "YOU DESTROYED THE BOSS !!!";
-                    } else if (timeSeconds <= 60 && shieldBoss > 0 && shieldPlayer > 0) {
+                        gameDialogGameOver = "YOU'VE DESTROYED THE BOSS !!!";
+                    } else if (timeSeconds === 60 && shieldBoss > 0 && shieldPlayer > 0) {
                         gameDialog = "TIME OVER";
                         gameDialogGameOver = "YOU'VE SEEN THE BOSS...";
                     } else {
@@ -731,8 +731,10 @@ $(function() {
         if (!gameOver) {
             timeSeconds++; // Incrementation seconds
             if (timeSeconds % 15 === 0) { // Modulo sur 15
-                level++;
-                $("#gameDialog").html('LEVEL : ' + level).fadeTo(500, 1).fadeTo(1000, 0);
+                if (level < 4) {
+                    level++;
+                    $("#gameDialog").html('LEVEL : ' + level).fadeTo(500, 1).fadeTo(1000, 0);
+                }
             }
             if (timeSeconds < 10) {
                 timeSeconds = '0' + timeSeconds;
